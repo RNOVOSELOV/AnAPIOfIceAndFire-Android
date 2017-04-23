@@ -1,9 +1,10 @@
-package xyz.rnovoselov.enterprise.aniceandfire;
+package xyz.rnovoselov.enterprise.aniceandfire.ui.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SplashActivity extends AppCompatActivity {
+import xyz.rnovoselov.enterprise.aniceandfire.R;
+
+public class SplashActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
