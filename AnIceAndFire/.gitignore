@@ -31,6 +31,7 @@
 /.idea/gradle.xml
 /.idea/runConfigurations.xml
 /.idea/vcs.xml
+/.idea/inspectionProfiles
 
 # OS-specific files
 .DS_Store?

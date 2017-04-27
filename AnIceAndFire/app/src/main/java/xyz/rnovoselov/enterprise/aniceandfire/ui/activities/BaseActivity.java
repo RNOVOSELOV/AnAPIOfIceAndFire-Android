@@ -3,9 +3,10 @@ package xyz.rnovoselov.enterprise.aniceandfire.ui.activities;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import com.arellomobile.mvp.MvpAppCompatActivity;
 
 import xyz.rnovoselov.enterprise.aniceandfire.R;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
@@ -14,13 +15,13 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
  * Created by roman on 23.04.17.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends MvpAppCompatActivity {
 
     protected String TAG = Constants.TAG_PREFIX + getClass().getSimpleName();
 
     protected AlertDialog progressDialog;
 
-    protected void showProgress() {
+    protected void showProgressDialog() {
         if (progressDialog == null) {
             View view = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null);
             progressDialog = new AlertDialog.Builder(this)
@@ -32,7 +33,7 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.show();
     }
 
-    protected void hideProgress() {
+    protected void hideProgressDialog() {
         if (progressDialog != null) {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
