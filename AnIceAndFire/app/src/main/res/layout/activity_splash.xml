@@ -5,6 +5,14 @@
     android:id="@+id/coordinator_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context="xyz.rnovoselov.enterprise.aniceandfire.ui.activities.SplashActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/splash"
+        android:scaleType="centerCrop"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -30,7 +30,9 @@ public class BaseActivity extends MvpAppCompatActivity {
                     .create();
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
-        progressDialog.show();
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
     }
 
     protected void hideProgressDialog() {
@@ -39,5 +41,11 @@ public class BaseActivity extends MvpAppCompatActivity {
                 progressDialog.dismiss();
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        hideProgressDialog();
     }
 }

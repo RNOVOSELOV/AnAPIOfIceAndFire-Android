@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="xyz.rnovoselov.enterprise.aniceandfire">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".IceAndFireApplication"
         android:allowBackup="true"
