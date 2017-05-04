@@ -5,7 +5,7 @@ package xyz.rnovoselov.enterprise.aniceandfire.utils;
  */
 
 public class AppConfig {
-    public static final String BASE_URL = "";
+    public static final String BASE_URL = "http://anapioficeandfire.com/api/";
     public static final int MAX_CONNECTION_TIMEOUT = 5000;
     public static final int MAX_READ_TIMEOUT = 5000;
     public static final int MAX_WRITE_TIMEOUT = 5000;
