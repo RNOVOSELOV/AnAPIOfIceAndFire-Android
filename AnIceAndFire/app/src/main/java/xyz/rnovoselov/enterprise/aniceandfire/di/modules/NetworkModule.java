@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
@@ -45,6 +46,7 @@ public class NetworkModule {
         return new Retrofit.Builder()
                 .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(createConverterFactory())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
     }

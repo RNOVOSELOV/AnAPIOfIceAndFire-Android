@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AnIceAndFire</string>
+    <string name="error_net_unavailable">Интернет недоступен. Попробуйте позже.</string>
 </resources>

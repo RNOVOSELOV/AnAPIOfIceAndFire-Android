@@ -14,6 +14,6 @@ public interface ISplashView extends MvpView {
 
     void showMessage(String message);
 
-    void showError(Exception exception);
+    void showError(Throwable exception);
 
 }

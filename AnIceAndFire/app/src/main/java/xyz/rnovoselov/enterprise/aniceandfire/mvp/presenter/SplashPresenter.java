@@ -1,6 +1,6 @@
 package xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter;
 
-import android.os.Handler;
+import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
@@ -8,7 +8,8 @@ import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
 
 import dagger.Provides;
-import xyz.rnovoselov.enterprise.aniceandfire.data.managers.DataManager;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.SplashModel;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
@@ -26,23 +27,15 @@ public class SplashPresenter extends MvpPresenter<ISplashView> {
     public SplashPresenter() {
         Component component = createDaggerComponent();
         component.inject(this);
-/*
 
-        getViewState().showMessage("Start");
-        getViewState().showProgress();
-
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getViewState().hideProgress();
-//                getViewState().showMessage(isSomeDataDownloaded() ? "TRUE" : "FALSE");
-            }
-        }, 3000);
-*/
-
-
+        model.getHousesFromNetwork()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(houseResponce -> {
+                            Log.e("TAG", houseResponce.getName() + " " + Thread.currentThread().getName());
+                        },
+                        throwable -> getViewState().showError(throwable)
+                );
     }
 
     public boolean isSomeDataDownloaded() {

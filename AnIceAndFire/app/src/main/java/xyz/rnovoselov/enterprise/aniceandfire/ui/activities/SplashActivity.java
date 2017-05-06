@@ -50,7 +50,7 @@ public class SplashActivity extends BaseActivity implements ISplashView {
     }
 
     @Override
-    public void showError(Exception exception) {
+    public void showError(Throwable exception) {
         showMessage(exception.getMessage());
     }
 

@@ -3,11 +3,10 @@ package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
-import static xyz.rnovoselov.enterprise.aniceandfire.utils.Constants.DEFAULT_LAST_UPDATE_DATE;
+import static xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig.DEFAULT_LAST_UPDATE_DATE;
 import static xyz.rnovoselov.enterprise.aniceandfire.utils.Constants.HOUSES_LAST_UPDATED_TIMESTAMP;
 
 

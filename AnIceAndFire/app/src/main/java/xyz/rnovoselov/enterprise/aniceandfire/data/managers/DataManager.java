@@ -1,13 +1,19 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
 
+import android.util.Log;
+
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataManagerComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DataManagerComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.modules.LocalModule;
 import xyz.rnovoselov.enterprise.aniceandfire.di.modules.NetworkModule;
+import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 /**
@@ -58,6 +64,15 @@ public class DataManager {
      * какие-то данные о домах в БД, иначе возвращает false
      */
     public boolean isInfoAboutHousesAreDownloaded() {
-        return !preferencesManager.getLastProductUpdate().equals(Constants.DEFAULT_LAST_UPDATE_DATE);
+        return !preferencesManager.getLastProductUpdate().equals(AppConfig.DEFAULT_LAST_UPDATE_DATE);
+    }
+
+    public Observable<HouseResponce> getHousesFromNetwork() {
+        return restService.getHouses(getLastModifiedTimestamp())
+                .compose(new RestCallTransformer<>())
+                .doOnNext(houseResponces -> {
+                    Log.e("TAG", "getHousesFromNetwork " + houseResponces.size() + " " + Thread.currentThread().getName());
+                })
+                .flatMap(Observable::fromIterable);
     }
 }
