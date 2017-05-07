@@ -14,7 +14,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.managers.DataManager;
 public class ModelModule {
     @Provides
     @Singleton
-    DataManager provideDataManager () {
+    DataManager provideDataManager() {
         return new DataManager();
     }
 }

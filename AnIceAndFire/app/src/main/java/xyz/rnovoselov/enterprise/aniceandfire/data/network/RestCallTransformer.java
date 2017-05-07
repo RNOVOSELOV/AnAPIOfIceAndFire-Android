@@ -18,9 +18,7 @@ public class RestCallTransformer<R> implements ObservableTransformer<Response<R>
     @Override
     public ObservableSource<R> apply(@NonNull Observable<Response<R>> upstream) {
         return NetworkStatusChecker.isInternetAvailable()
-                .flatMap(aBoolean -> {
-                    return aBoolean ? upstream : Observable.error(new NetworkAvailableError());
-                })
+                .flatMap(aBoolean -> aBoolean ? upstream : Observable.error(new NetworkAvailableError()))
                 .flatMap(rResponse -> {
                     switch (rResponse.code()) {
                         case 200:

@@ -10,9 +10,11 @@ import javax.inject.Inject;
 import dagger.Provides;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import xyz.rnovoselov.enterprise.aniceandfire.data.managers.DataManager;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.SplashModel;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
+import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 /**
  * Created by roman on 27.04.17.
@@ -21,21 +23,27 @@ import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
 @InjectViewState
 public class SplashPresenter extends MvpPresenter<ISplashView> {
 
+    private static final String TAG = Constants.TAG_PREFIX + DataManager.class.getSimpleName();
+
     @Inject
     SplashModel model;
 
     public SplashPresenter() {
         Component component = createDaggerComponent();
         component.inject(this);
-
+        getViewState().showProgress();
         model.getHousesFromNetwork()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(houseResponce -> {
-                            Log.e("TAG", houseResponce.getName() + " " + Thread.currentThread().getName());
+                            Log.e(TAG, houseResponce.getName() + " " + Thread.currentThread().getName());
                         },
-                        throwable -> getViewState().showError(throwable)
+                        throwable -> {
+                            getViewState().showError(throwable);
+                            Log.e(TAG, throwable.toString());
+                        }
                 );
+        getViewState().hideProgress();
     }
 
     public boolean isSomeDataDownloaded() {
