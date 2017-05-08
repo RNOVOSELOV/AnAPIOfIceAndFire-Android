@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import retrofit2.Response;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
@@ -64,7 +66,7 @@ public class DataManager {
             return Observable.empty();
         }
         return restService.getHouses(lastModified, pageNumber, AppConfig.HOUSES_PER_QUERY)
-                .concatMap(listResponse -> Observable.just(listResponse)
+                .flatMap(listResponse -> Observable.just(listResponse)
                         .mergeWith(getHousesList(RestUtils.getNextHousePageNumber(pageNumber, listResponse.headers().get("link")), lastModified)));
     }
 
@@ -82,7 +84,7 @@ public class DataManager {
      *
      * @return поток данных типа {@link HouseResponce}
      */
-    public Observable<HouseResponce> getHousesFromNetwork() {
+    public Flowable<HouseResponce> getHousesFromNetwork() {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? getHousesList() : Observable.error(new NetworkAvailableError()))
                 .flatMap(listResponse -> {
@@ -95,6 +97,7 @@ public class DataManager {
                             return Observable.error(new ApiError(listResponse.code()));
                     }
                 })
-                .flatMap(Observable::fromIterable);
+                .toFlowable(BackpressureStrategy.BUFFER)
+                .flatMap(Flowable::fromIterable);
     }
 }
