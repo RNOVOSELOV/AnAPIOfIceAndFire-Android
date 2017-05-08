@@ -36,20 +36,17 @@ public class SplashPresenter extends MvpPresenter<ISplashView> {
         component.inject(this);
 
         houseSubscriber = new ResourceSubscriber<HouseResponce>() {
-            @Override
-            public void onStart() {
-                request(Long.MAX_VALUE);
-            }
 
             @Override
             public void onNext(HouseResponce houseResponce) {
-                Log.e(TAG, houseResponce.getName() + " " + Thread.currentThread().getName());
+                Log.e(TAG, houseResponce.getName());
             }
 
             @Override
             public void onError(Throwable t) {
                 getViewState().showError(t);
                 getViewState().hideProgress();
+                Log.e(TAG, "ERROR: " + t.toString());
             }
 
             @Override

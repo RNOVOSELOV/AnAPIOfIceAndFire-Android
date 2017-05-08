@@ -9,8 +9,8 @@ import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import retrofit2.Response;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.ApiError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataManagerComponent;
@@ -49,7 +49,7 @@ public class DataManager {
      *
      * @return значение типа {@link String}, в формате "Thu, 01 Jan 1970 00:00:00 GMT"
      */
-    public String getLastModifiedTimestamp() {
+    private String getLastModifiedTimestamp() {
         return preferencesManager.getLastProductUpdate();
     }
 
@@ -84,19 +84,10 @@ public class DataManager {
      *
      * @return поток данных типа {@link HouseResponce}
      */
-    public Flowable<HouseResponce> getHousesFromNetwork() {
+    public Flowable<HouseResponce> getHousesFromNetworkObs() {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? getHousesList() : Observable.error(new NetworkAvailableError()))
-                .flatMap(listResponse -> {
-                    switch (listResponse.code()) {
-                        case 200:
-                            return Observable.just(listResponse.body());
-                        case 304:
-                            return Observable.empty();
-                        default:
-                            return Observable.error(new ApiError(listResponse.code()));
-                    }
-                })
+                .compose(new RestCallTransformer<>())
                 .toFlowable(BackpressureStrategy.BUFFER)
                 .flatMap(Flowable::fromIterable);
     }

@@ -6,8 +6,6 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.annotations.NonNull;
 import retrofit2.Response;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.ApiError;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
-import xyz.rnovoselov.enterprise.aniceandfire.utils.NetworkStatusChecker;
 
 /**
  * Created by roman on 05.05.17.
@@ -17,8 +15,7 @@ public class RestCallTransformer<R> implements ObservableTransformer<Response<R>
 
     @Override
     public ObservableSource<R> apply(@NonNull Observable<Response<R>> upstream) {
-        return NetworkStatusChecker.isInternetAvailable()
-                .flatMap(aBoolean -> aBoolean ? upstream : Observable.error(new NetworkAvailableError()))
+        return upstream
                 .flatMap(rResponse -> {
                     switch (rResponse.code()) {
                         case 200:
