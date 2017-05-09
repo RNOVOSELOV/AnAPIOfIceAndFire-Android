@@ -6,7 +6,7 @@ import com.arellomobile.mvp.MvpView;
  * Created by roman on 26.04.17.
  */
 
-public interface ISplashView extends MvpView {
+public interface IHouseView extends MvpView {
 
     void showProgress();
 

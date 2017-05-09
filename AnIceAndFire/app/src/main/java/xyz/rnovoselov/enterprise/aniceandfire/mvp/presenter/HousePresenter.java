@@ -14,8 +14,8 @@ import io.reactivex.subscribers.ResourceSubscriber;
 import xyz.rnovoselov.enterprise.aniceandfire.data.managers.DataManager;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
-import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.SplashModel;
-import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.IHouseView;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 /**
@@ -23,15 +23,15 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
  */
 
 @InjectViewState
-public class SplashPresenter extends MvpPresenter<ISplashView> {
+public class HousePresenter extends MvpPresenter<IHouseView> {
 
     private static final String TAG = Constants.TAG_PREFIX + DataManager.class.getSimpleName();
     ResourceSubscriber<HouseResponce> houseSubscriber;
 
     @Inject
-    SplashModel model;
+    HouseModel model;
 
-    public SplashPresenter() {
+    public HousePresenter() {
         Component component = createDaggerComponent();
         component.inject(this);
 
@@ -65,7 +65,7 @@ public class SplashPresenter extends MvpPresenter<ISplashView> {
     //region ================ DI ================
 
     private Component createDaggerComponent() {
-        return DaggerSplashPresenter_Component.builder()
+        return DaggerHousePresenter_Component.builder()
                 .module(new Module())
                 .build();
     }
@@ -73,16 +73,16 @@ public class SplashPresenter extends MvpPresenter<ISplashView> {
     @dagger.Module
     public class Module {
         @Provides
-        @DaggerScope(SplashPresenter.class)
-        SplashModel provideSplashModel() {
-            return new SplashModel();
+        @DaggerScope(HousePresenter.class)
+        HouseModel provideSplashModel() {
+            return new HouseModel();
         }
     }
 
-    @dagger.Component(modules = SplashPresenter.Module.class)
-    @DaggerScope(SplashPresenter.class)
+    @dagger.Component(modules = HousePresenter.Module.class)
+    @DaggerScope(HousePresenter.class)
     public interface Component {
-        void inject(SplashPresenter presenter);
+        void inject(HousePresenter presenter);
     }
 
     //endregion
