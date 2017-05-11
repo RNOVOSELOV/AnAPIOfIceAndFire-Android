@@ -1,18 +1,20 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
 
+import android.util.Log;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import retrofit2.Response;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataManagerComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DataManagerComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.modules.LocalModule;
@@ -34,6 +36,8 @@ public class DataManager {
     PreferencesManager preferencesManager;
     @Inject
     RestService restService;
+    @Inject
+    RealmManager realmManager;
 
     public DataManager() {
         DataManagerComponent component = DaggerDataManagerComponent.builder()
@@ -84,11 +88,14 @@ public class DataManager {
      *
      * @return поток данных типа {@link HouseResponce}
      */
-    public Flowable<HouseResponce> getHousesFromNetworkObs() {
+    public Observable<HouseResponce> getHousesFromNetworkObs() {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? getHousesList() : Observable.error(new NetworkAvailableError()))
                 .compose(new RestCallTransformer<>())
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .flatMap(Flowable::fromIterable);
+                .flatMap(Observable::from)
+                .map(HouseRealm::new)
+                .toList()
+                .doOnNext(houseRealms -> realmManager.saveHouseResponceToRealm(houseRealms))
+                .flatMap(houseRealms -> Observable.empty());
     }
 }

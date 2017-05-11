@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import io.reactivex.Observable;
+import rx.Observable;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 
 /**

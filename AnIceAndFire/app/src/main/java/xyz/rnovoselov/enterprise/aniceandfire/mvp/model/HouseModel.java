@@ -1,6 +1,6 @@
 package xyz.rnovoselov.enterprise.aniceandfire.mvp.model;
 
-import io.reactivex.Flowable;
+import rx.Observable;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 
 /**
@@ -13,7 +13,7 @@ public class HouseModel extends AbstractModel{
 
     }
 
-    public Flowable<HouseResponce> getHousesFromNetwork () {
+    public Observable<HouseResponce> getHousesFromNetwork () {
         return dataManager.getHousesFromNetworkObs();
     }
 }

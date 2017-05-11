@@ -8,9 +8,9 @@ import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
 
 import dagger.Provides;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.ResourceSubscriber;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.data.managers.DataManager;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
@@ -26,7 +26,6 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 public class HousePresenter extends MvpPresenter<IHouseView> {
 
     private static final String TAG = Constants.TAG_PREFIX + DataManager.class.getSimpleName();
-    ResourceSubscriber<HouseResponce> houseSubscriber;
 
     @Inject
     HouseModel model;
@@ -35,31 +34,28 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
         Component component = createDaggerComponent();
         component.inject(this);
 
-        houseSubscriber = new ResourceSubscriber<HouseResponce>() {
-
-            @Override
-            public void onNext(HouseResponce houseResponce) {
-                Log.e(TAG, houseResponce.getName());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                getViewState().showError(t);
-                getViewState().hideProgress();
-                Log.e(TAG, "ERROR: " + t.toString());
-            }
-
-            @Override
-            public void onComplete() {
-                getViewState().hideProgress();
-            }
-        };
-
         getViewState().showProgress();
         model.getHousesFromNetwork()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(houseSubscriber);
+                .subscribe(new Subscriber<HouseResponce>() {
+                    @Override
+                    public void onCompleted() {
+                        getViewState().hideProgress();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        getViewState().showError(t);
+                        getViewState().hideProgress();
+                        Log.e(TAG, "ERROR: " + t.toString());
+                    }
+
+                    @Override
+                    public void onNext(HouseResponce houseResponce) {
+
+                    }
+                });
     }
 
     //region ================ DI ================

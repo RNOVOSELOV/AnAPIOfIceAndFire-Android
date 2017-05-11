@@ -2,11 +2,11 @@ package xyz.rnovoselov.enterprise.aniceandfire.data.network;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Query;
+import rx.Observable;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
