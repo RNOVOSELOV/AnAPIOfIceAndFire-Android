@@ -11,7 +11,7 @@ import dagger.Provides;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import xyz.rnovoselov.enterprise.aniceandfire.data.managers.DataManager;
+import xyz.rnovoselov.enterprise.aniceandfire.data.providers.DataProvider;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
@@ -25,7 +25,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 @InjectViewState
 public class HousePresenter extends MvpPresenter<IHouseView> {
 
-    private static final String TAG = Constants.TAG_PREFIX + DataManager.class.getSimpleName();
+    private static final String TAG = Constants.TAG_PREFIX + DataProvider.class.getSimpleName();
 
     @Inject
     HouseModel model;

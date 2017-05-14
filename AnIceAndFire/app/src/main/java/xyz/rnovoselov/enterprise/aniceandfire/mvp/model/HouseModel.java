@@ -14,6 +14,6 @@ public class HouseModel extends AbstractModel{
     }
 
     public Observable<HouseResponce> getHousesFromNetwork () {
-        return dataManager.getHousesFromNetworkObs();
+        return dataProvider.getHousesFromNetworkObs();
     }
 }

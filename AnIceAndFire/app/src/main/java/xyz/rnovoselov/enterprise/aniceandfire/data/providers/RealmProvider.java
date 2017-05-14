@@ -1,4 +1,4 @@
-package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
+package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
  * Created by roman on 11.05.17.
  */
 
-public class RealmManager {
+public class RealmProvider {
 
     private Realm realmInstance;
 
-    public RealmManager() {
+    public RealmProvider() {
 
     }
 

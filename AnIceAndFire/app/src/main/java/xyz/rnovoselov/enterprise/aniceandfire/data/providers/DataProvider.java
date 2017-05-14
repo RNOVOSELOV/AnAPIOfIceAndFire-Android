@@ -1,6 +1,4 @@
-package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
-
-import android.util.Log;
+package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
 import java.util.List;
 
@@ -8,15 +6,14 @@ import javax.inject.Inject;
 
 import retrofit2.Response;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
-import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataManagerComponent;
-import xyz.rnovoselov.enterprise.aniceandfire.di.components.DataManagerComponent;
+import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataProviderComponent;
+import xyz.rnovoselov.enterprise.aniceandfire.di.components.DataProviderComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.modules.LocalModule;
 import xyz.rnovoselov.enterprise.aniceandfire.di.modules.NetworkModule;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
@@ -28,19 +25,19 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.RestUtils;
  * Created by roman on 27.04.17.
  */
 
-public class DataManager {
+public class DataProvider {
 
-    private static final String TAG = Constants.TAG_PREFIX + DataManager.class.getSimpleName();
+    private static final String TAG = Constants.TAG_PREFIX + DataProvider.class.getSimpleName();
 
     @Inject
-    PreferencesManager preferencesManager;
+    PreferencesProvider preferencesProvider;
     @Inject
     RestService restService;
     @Inject
-    RealmManager realmManager;
+    RealmProvider realmProvider;
 
-    public DataManager() {
-        DataManagerComponent component = DaggerDataManagerComponent.builder()
+    public DataProvider() {
+        DataProviderComponent component = DaggerDataProviderComponent.builder()
                 .appComponent(IceAndFireApplication.getAppComponent())
                 .localModule(new LocalModule())
                 .networkModule(new NetworkModule())
@@ -54,7 +51,7 @@ public class DataManager {
      * @return значение типа {@link String}, в формате "Thu, 01 Jan 1970 00:00:00 GMT"
      */
     private String getLastModifiedTimestamp() {
-        return preferencesManager.getLastProductUpdate();
+        return preferencesProvider.getLastProductUpdate();
     }
 
     /**
@@ -95,7 +92,7 @@ public class DataManager {
                 .flatMap(Observable::from)
                 .map(HouseRealm::new)
                 .toList()
-                .doOnNext(houseRealms -> realmManager.saveHouseResponceToRealm(houseRealms))
+                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
                 .flatMap(houseRealms -> Observable.empty());
     }
 }

@@ -1,4 +1,4 @@
-package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
+package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,11 +14,11 @@ import static xyz.rnovoselov.enterprise.aniceandfire.utils.Constants.HOUSES_LAST
  * Created by roman on 27.04.17.
  */
 
-public class PreferencesManager {
+public class PreferencesProvider {
 
     private SharedPreferences preferences;
 
-    public PreferencesManager(Context context) {
+    public PreferencesProvider(Context context) {
         preferences = context.getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
