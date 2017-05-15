@@ -11,6 +11,9 @@ public class AppConfig {
     public static final int HOUSES_START_PAGE_NUMBER = 1;
     public static final int HOUSES_PER_QUERY = 50;
 
+    public static final String API_VERSION_HEADER_KEY = "Accept";
+    public static final String API_VERSION_HEADER_VALUE = "application/vnd.anapioficeandfire+json; version=1";
+
     public static final int MAX_CONNECTION_TIMEOUT = 5000;
     public static final int MAX_READ_TIMEOUT = 5000;
     public static final int MAX_WRITE_TIMEOUT = 5000;

@@ -9,16 +9,21 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import xyz.rnovoselov.enterprise.aniceandfire.R;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter.CharacterPresenter;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter.HousePresenter;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ICharacterView;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.IHouseView;
 
-public class SplashActivity extends BaseActivity implements IHouseView {
+public class SplashActivity extends BaseActivity implements IHouseView, ICharacterView {
 
     @BindView(R.id.coordinator_splash)
     CoordinatorLayout coordinator;
 
     @InjectPresenter
-    HousePresenter presenter;
+    HousePresenter housePresenter;
+
+    @InjectPresenter
+    CharacterPresenter characterPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

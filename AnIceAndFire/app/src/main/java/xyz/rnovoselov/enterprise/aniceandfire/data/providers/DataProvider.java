@@ -50,8 +50,8 @@ public class DataProvider {
      *
      * @return значение типа {@link String}, в формате "Thu, 01 Jan 1970 00:00:00 GMT"
      */
-    private String getLastModifiedTimestamp() {
-        return preferencesProvider.getLastProductUpdate();
+    private String getLastRequestDate() {
+        return preferencesProvider.getLastRequestHousesTime();
     }
 
     /**
@@ -68,7 +68,7 @@ public class DataProvider {
         }
         return restService.getHouses(lastModified, pageNumber, AppConfig.HOUSES_PER_QUERY)
                 .flatMap(listResponse -> Observable.just(listResponse)
-                        .mergeWith(getHousesList(RestUtils.getNextHousePageNumber(pageNumber, listResponse.headers().get("link")), lastModified)));
+                        .mergeWith(getHousesList(RestUtils.getNextHousePageNumber(pageNumber, listResponse.headers().get(Constants.HEADER_LINK)), lastModified)));
     }
 
     /**
@@ -77,7 +77,7 @@ public class DataProvider {
      * @return поток данных, в качестве испускаемых значений которого является список домов с одной из пагинированных страниц
      */
     private Observable<Response<List<HouseResponce>>> getHousesList() {
-        return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, getLastModifiedTimestamp());
+        return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, getLastRequestDate());
     }
 
     /**
@@ -88,6 +88,12 @@ public class DataProvider {
     public Observable<HouseResponce> getHousesFromNetworkObs() {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? getHousesList() : Observable.error(new NetworkAvailableError()))
+                .doOnNext(listResponse -> {
+                    String requestDate = listResponse.headers().get(Constants.HEADER_DATE);
+                    if (!(requestDate == null || requestDate.isEmpty())) {
+                        preferencesProvider.saveLastRequestHousesTime(requestDate);
+                    }
+                })
                 .compose(new RestCallTransformer<>())
                 .flatMap(Observable::from)
                 .map(HouseRealm::new)

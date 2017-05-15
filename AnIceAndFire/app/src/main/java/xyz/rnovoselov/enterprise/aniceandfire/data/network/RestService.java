@@ -17,5 +17,5 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 public interface RestService {
 
     @GET("houses")
-    Observable<Response<List<HouseResponce>>> getHouses(@Header(Constants.IF_MODIFIED_SINCE) String lastModifiedDate, @Query("page") int pageNumber, @Query("pageSize") int housesCount);
+    Observable<Response<List<HouseResponce>>> getHouses(@Header(Constants.HEADER_IF_MODIFIED_SINCE) String lastModifiedDate, @Query("page") int pageNumber, @Query("pageSize") int housesCount);
 }

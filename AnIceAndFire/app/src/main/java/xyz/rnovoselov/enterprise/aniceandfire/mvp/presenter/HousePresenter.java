@@ -25,7 +25,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 @InjectViewState
 public class HousePresenter extends MvpPresenter<IHouseView> {
 
-    private static final String TAG = Constants.TAG_PREFIX + DataProvider.class.getSimpleName();
+    private static final String TAG = Constants.TAG_PREFIX + HousePresenter.class.getSimpleName();
 
     @Inject
     HouseModel model;
@@ -67,17 +67,17 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
     }
 
     @dagger.Module
-    public class Module {
+    class Module {
         @Provides
         @DaggerScope(HousePresenter.class)
-        HouseModel provideSplashModel() {
+        HouseModel provideHouseModel() {
             return new HouseModel();
         }
     }
 
-    @dagger.Component(modules = HousePresenter.Module.class)
+    @dagger.Component(modules = Module.class)
     @DaggerScope(HousePresenter.class)
-    public interface Component {
+    interface Component {
         void inject(HousePresenter presenter);
     }
 

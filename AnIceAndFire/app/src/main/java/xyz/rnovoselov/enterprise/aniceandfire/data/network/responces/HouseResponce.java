@@ -8,22 +8,22 @@ import java.util.List;
 
 public class HouseResponce {
 
-    public String url;
-    public String name;
-    public String region;
-    public String coatOfArms;
-    public String words;
-    public List<String> titles = null;
-    public List<String> seats = null;
-    public String currentLord;
-    public String heir;
-    public String overlord;
-    public String founded;
-    public String founder;
-    public String diedOut;
-    public List<String> ancestralWeapons = null;
-    public List<String> cadetBranches = null;
-    public List<String> swornMembers = null;
+    private String url;
+    private String name;
+    private String region;
+    private String coatOfArms;
+    private String words;
+    private List<String> titles = null;
+    private List<String> seats = null;
+    private String currentLord;
+    private String heir;
+    private String overlord;
+    private String founded;
+    private String founder;
+    private String diedOut;
+    private List<String> ancestralWeapons = null;
+    private List<String> cadetBranches = null;
+    private List<String> swornMembers = null;
 
     public String getUrl() {
         return url;
