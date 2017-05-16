@@ -14,4 +14,5 @@ public interface Constants {
     String HEADER_IF_MODIFIED_SINCE = "If-Modified-Since";
     String HEADER_DATE = "date";
     String HEADER_LINK = "link";
+    String HEADER_LAST_MODIFIED = "last-modified";
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 import static xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig.DEFAULT_LAST_UPDATE_DATE;
@@ -40,7 +41,7 @@ public class PreferencesProvider {
      */
     @NonNull
     public String getLastRequestHousesTime() {
-        //return "Mon, 08 May 2017 17:18:47 GMT";
-        return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
+        return AppConfig.DEFAULT_LAST_UPDATE_DATE;
+        //return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
     }
 }

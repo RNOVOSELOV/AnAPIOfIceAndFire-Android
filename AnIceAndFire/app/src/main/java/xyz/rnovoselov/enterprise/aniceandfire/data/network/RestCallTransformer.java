@@ -21,7 +21,6 @@ public class RestCallTransformer<R> implements Observable.Transformer<Response<R
                             return Observable.empty();
                         default:
                             return Observable.error(new ApiError(rResponse.code()));
-
                     }
                 });
     }

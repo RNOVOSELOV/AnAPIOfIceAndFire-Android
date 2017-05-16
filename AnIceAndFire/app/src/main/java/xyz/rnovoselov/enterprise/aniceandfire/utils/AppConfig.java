@@ -17,4 +17,6 @@ public class AppConfig {
     public static final int MAX_CONNECTION_TIMEOUT = 5000;
     public static final int MAX_READ_TIMEOUT = 5000;
     public static final int MAX_WRITE_TIMEOUT = 5000;
+
+    public static final int[] DEFAULT_HOUSES = {7, 17, 169, 229, 362, 378, 395};
 }

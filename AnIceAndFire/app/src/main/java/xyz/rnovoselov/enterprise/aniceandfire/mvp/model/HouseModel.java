@@ -1,7 +1,7 @@
 package xyz.rnovoselov.enterprise.aniceandfire.mvp.model;
 
 import rx.Observable;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponse;
 
 /**
  * Created by roman on 01.05.17.
@@ -13,7 +13,7 @@ public class HouseModel extends AbstractModel{
 
     }
 
-    public Observable<HouseResponce> getHousesFromNetwork () {
-        return dataProvider.getHousesFromNetworkObs();
+    public Observable getHousesFromNetwork () {
+        return dataProvider.getHouseFromNetworkObs(7);
     }
 }

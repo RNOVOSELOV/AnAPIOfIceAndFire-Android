@@ -9,8 +9,10 @@ import rx.Observable;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.ApiError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponse;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.CharacterRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataProviderComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DataProviderComponent;
@@ -62,7 +64,7 @@ public class DataProvider {
      *                     Передаем дату последней загрухки данных в формате "Thu, 01 Jan 1970 00:00:00 GMT", чтобы сервер отправил нам данные только в случае их изменения
      * @return поток данных со списком всех домов
      */
-    private Observable<Response<List<HouseResponce>>> getHousesList(int pageNumber, String lastModified) {
+    private Observable<Response<List<HouseResponse>>> getHousesList(int pageNumber, String lastModified) {
         if (pageNumber == 0) {
             return Observable.empty();
         }
@@ -76,16 +78,16 @@ public class DataProvider {
      *
      * @return поток данных, в качестве испускаемых значений которого является список домов с одной из пагинированных страниц
      */
-    private Observable<Response<List<HouseResponce>>> getHousesList() {
+    private Observable<Response<List<HouseResponse>>> getHousesList() {
         return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, getLastRequestDate());
     }
 
     /**
      * Получаем список всех домов с АПИ
      *
-     * @return поток данных типа {@link HouseResponce}
+     * @return поток данных типа {@link HouseResponse}
      */
-    public Observable<HouseResponce> getHousesFromNetworkObs() {
+    public Observable<HouseResponse> getHousesFromNetworkObs() {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? getHousesList() : Observable.error(new NetworkAvailableError()))
                 .doOnNext(listResponse -> {
@@ -98,7 +100,47 @@ public class DataProvider {
                 .flatMap(Observable::from)
                 .map(HouseRealm::new)
                 .toList()
-                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
+//                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
                 .flatMap(houseRealms -> Observable.empty());
+    }
+
+    private Observable<HouseResponse> transformRetrofitHouseResponce(Response<HouseResponse> response) {
+        switch (response.code()) {
+            case 200:
+                String lastModified = response.headers().get(Constants.HEADER_LAST_MODIFIED);
+                return Observable.just(response.body())
+                        .doOnNext(houseResponse -> houseResponse.setLastModified(lastModified));
+            case 304:
+                return Observable.empty();
+            default:
+                return Observable.error(new ApiError(response.code()));
+        }
+    }
+
+    public Observable<List<CharacterRealm>> getCharactersFromNetworkObs(List<String> swornMembers) {
+        return Observable.from(swornMembers)
+                .map(s -> s.split("/"))
+                .map(strings -> strings[strings.length - 1])
+                .flatMap(s -> restService.getCharacterById(s))
+                .compose(new RestCallTransformer<>())
+                .map(CharacterRealm::new)
+                .toList();
+    }
+
+    // add last modified from realm to query
+
+    public Observable getHouseFromNetworkObs(int houseId) {
+        return NetworkStatusChecker.isInternetAvailable()
+                .flatMap(aBoolean -> aBoolean ? restService.getHouse(getLastRequestDate(), String.valueOf(houseId)) : Observable.error(new NetworkAvailableError()))
+                .flatMap(this::transformRetrofitHouseResponce)
+                .flatMap(houseResponse ->
+                        Observable.zip(Observable.just(houseResponse), getCharactersFromNetworkObs(houseResponse.getSwornMembers()),
+                                (houseResponse1, characterRealms) -> {
+                                    HouseRealm houseRealm = new HouseRealm(houseResponse1);
+                                    houseRealm.getCharacters().addAll(characterRealms);
+                                    return houseRealm;
+                                }))
+                .doOnNext(houseRealm -> realmProvider.saveHouseResponceToRealm(houseRealm))
+                .flatMap(houseRealm -> Observable.empty());
     }
 }

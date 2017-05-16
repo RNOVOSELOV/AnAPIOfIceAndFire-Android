@@ -2,11 +2,14 @@ package xyz.rnovoselov.enterprise.aniceandfire.data.network.responces;
 
 import java.util.List;
 
+import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
+import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
+
 /**
  * Created by roman on 04.05.17.
  */
 
-public class HouseResponce {
+public class HouseResponse {
 
     private String url;
     private String name;
@@ -24,6 +27,8 @@ public class HouseResponce {
     private List<String> ancestralWeapons = null;
     private List<String> cadetBranches = null;
     private List<String> swornMembers = null;
+
+    private String lastModified = AppConfig.DEFAULT_LAST_UPDATE_DATE;
 
     public String getUrl() {
         return url;
@@ -87,5 +92,13 @@ public class HouseResponce {
 
     public List<String> getSwornMembers() {
         return swornMembers;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 }

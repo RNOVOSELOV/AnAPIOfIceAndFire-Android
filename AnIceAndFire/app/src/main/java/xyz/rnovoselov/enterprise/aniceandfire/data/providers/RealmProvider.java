@@ -1,7 +1,5 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
-import java.util.List;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -17,16 +15,11 @@ public class RealmProvider {
     private Realm realmInstance;
 
     public RealmProvider() {
-
     }
 
-    public void saveHouseResponceToRealm(List<HouseRealm> houseResponce) {
+    public void saveHouseResponceToRealm(HouseRealm houseRealm) {
         Realm realm = Realm.getDefaultInstance();
-//        HouseRealm houseRealm = new HouseRealm(houseResponce);
-
-        // добавить героев
-
-        realm.executeTransaction(realm1 -> realm1.insertOrUpdate(houseResponce));
+        realm.executeTransaction(realm1 -> realm1.insertOrUpdate(houseRealm));
         realm.close();
     }
 
