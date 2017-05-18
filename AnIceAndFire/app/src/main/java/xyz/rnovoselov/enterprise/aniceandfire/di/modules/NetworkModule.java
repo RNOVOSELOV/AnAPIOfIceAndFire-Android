@@ -61,7 +61,7 @@ public class NetworkModule {
     private OkHttpClient createClient() {
         return new OkHttpClient.Builder()
                 .addInterceptor(new HeaderInterceptor())
-                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                 .addNetworkInterceptor(new StethoInterceptor())
                 .connectTimeout(AppConfig.MAX_CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(AppConfig.MAX_READ_TIMEOUT, TimeUnit.MILLISECONDS)

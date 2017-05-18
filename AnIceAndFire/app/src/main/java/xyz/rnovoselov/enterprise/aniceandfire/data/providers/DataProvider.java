@@ -6,6 +6,8 @@ import javax.inject.Inject;
 
 import retrofit2.Response;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
@@ -104,6 +106,14 @@ public class DataProvider {
                 .flatMap(houseRealms -> Observable.empty());
     }
 
+    //region ================ HOUSES ================
+
+    /**
+     * Метод трансформирует ответ от АПИ и сохраняет Last-Modified информацию из хедера в обьект {@link HouseResponse}
+     *
+     * @param response ответ от АПИ
+     * @return последовательность обьектов {@link HouseResponse}, либо ошибку
+     */
     private Observable<HouseResponse> transformRetrofitHouseResponce(Response<HouseResponse> response) {
         switch (response.code()) {
             case 200:
@@ -117,7 +127,13 @@ public class DataProvider {
         }
     }
 
-    public Observable<List<CharacterRealm>> getCharactersFromNetworkObs(List<String> swornMembers) {
+    /**
+     * Метод загружает информацию о персонаже
+     *
+     * @param swornMembers список персонажей, о которых необходимо загрузить информацию
+     * @return список обьектов типа {@link CharacterRealm}
+     */
+    private Observable<List<CharacterRealm>> getCharactersFromNetworkObs(List<String> swornMembers) {
         return Observable.from(swornMembers)
                 .map(s -> s.split("/"))
                 .map(strings -> strings[strings.length - 1])
@@ -127,11 +143,14 @@ public class DataProvider {
                 .toList();
     }
 
-    // add last modified from realm to query
-
-    public Observable getHouseFromNetworkObs(int houseId) {
-        return NetworkStatusChecker.isInternetAvailable()
-                .flatMap(aBoolean -> aBoolean ? restService.getHouse(getLastRequestDate(), String.valueOf(houseId)) : Observable.error(new NetworkAvailableError()))
+    /**
+     * Метод обрабатывает ответ запроса информации о доме с АПИ
+     *
+     * @param response ответ от REST сервиса, содержащий информацию о доме
+     * @return возвращат пустую последовательность, информация одоме сохраняется в Realm
+     */
+    private Observable<HouseRealm> processApiHouseResponce(Response<HouseResponse> response) {
+        return Observable.just(response)
                 .flatMap(this::transformRetrofitHouseResponce)
                 .flatMap(houseResponse ->
                         Observable.zip(Observable.just(houseResponse), getCharactersFromNetworkObs(houseResponse.getSwornMembers()),
@@ -140,7 +159,45 @@ public class DataProvider {
                                     houseRealm.getCharacters().addAll(characterRealms);
                                     return houseRealm;
                                 }))
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(houseRealm -> realmProvider.saveHouseResponceToRealm(houseRealm))
                 .flatMap(houseRealm -> Observable.empty());
     }
+
+    /**
+     * Метод получает информацию о доме с АПИ и сохранят (или обновляет) данные в Realm
+     *
+     * @param houseId идентификатор дома, который необходимо загрузить с АПИ
+     * @return метод возвращает пустую последовательность, загруженные данные сохраняются в Realm
+     */
+    public Observable<HouseRealm> getHouseFromNetworkAndSaveToRealmObs(int houseId) {
+        return NetworkStatusChecker.isInternetAvailable()
+                .observeOn(Schedulers.io())
+                .flatMap(aBoolean -> aBoolean ? restService.getHouse(getLastRequestDate(), String.valueOf(houseId)) : Observable.error(new NetworkAvailableError()))
+                .flatMap(this::processApiHouseResponce);
+    }
+
+    /**
+     * Метод получает информацию о списке домов с АПИ и сохранят (или обновляет) данные в Realm
+     *
+     * @param housesId {@link List} домов типа {@link Integer}: идентификаторы домов, которые необходимо загрузить с АПИ
+     * @return метод возвращает пустую последовательность, загруженные данные сохраняются в Realm
+     */
+    public Observable<HouseRealm> getHouseFromNetworkAndSaveToRealmObs(List<Integer> housesId) {
+        return NetworkStatusChecker.isInternetAvailable()
+                .observeOn(Schedulers.io())
+                .flatMap(aBoolean -> aBoolean ? Observable.from(housesId) : Observable.error(new NetworkAvailableError()))
+                .flatMap(integer -> restService.getHouse(getLastRequestDate(), String.valueOf(integer)))
+                .flatMap(this::processApiHouseResponce);
+    }
+
+    public Observable<HouseRealm> updateHousesInfo() {
+        return realmProvider.getAllHousesId()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .toList()
+                .flatMap(this::getHouseFromNetworkAndSaveToRealmObs);
+    }
+
+    //endregion
+
 }

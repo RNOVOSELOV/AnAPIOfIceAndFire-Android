@@ -12,7 +12,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.CharacterRe
 public class CharacterRealm extends RealmObject {
 
     @PrimaryKey
-    private int id;
+    private Integer id;
     @Required
     private String name;
 
@@ -25,7 +25,7 @@ public class CharacterRealm extends RealmObject {
         name = response.getName();
     }
 
-    public int getCharacterId() {
+    public Integer getId() {
         return id;
     }
 

@@ -33,14 +33,26 @@ public class RealmProvider {
         }
     }
 
-    public Observable<HouseRealm> getAllHouses() {
-        RealmResults<HouseRealm> managedHouses = getQueryRealmInstance().where(HouseRealm.class).findAllAsync();
-        return convertRealmResultToRxJavaObservable(managedHouses);
+    public Observable<String> getHouseLastModifiedDate(int houseId) {
+        RealmResults<HouseRealm> house = getQueryRealmInstance().where(HouseRealm.class)
+                .equalTo("id", houseId)
+                .findAllAsync();
+        return convertRealmResultToRxJavaObservable(house)
+                .first()
+                .map(HouseRealm::getLastModified);
+    }
+
+    public Observable<Integer> getAllHousesId() {
+        RealmResults<HouseRealm> managedHouses = getQueryRealmInstance().where(HouseRealm.class)
+                .equalTo("isActive", true)
+                .findAllAsync();
+        return convertRealmResultToRxJavaObservable(managedHouses)
+                .map(HouseRealm::getId);
     }
 
     private <T extends RealmObject> Observable<T> convertRealmResultToRxJavaObservable(RealmResults<T> results) {
         return results
-                .asObservable()                         // realm converts to v1 only
+                .asObservable()                         // realm converts to RxJava v1 only
                 .filter(RealmResults::isLoaded)
                 .first()                                // hot observable to cold
                 .flatMap(Observable::from);

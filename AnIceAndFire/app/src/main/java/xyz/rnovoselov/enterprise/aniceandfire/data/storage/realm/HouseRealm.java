@@ -1,9 +1,5 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm;
 
-import android.util.Log;
-
-import java.util.List;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -18,11 +14,14 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseRespon
 public class HouseRealm extends RealmObject {
 
     @PrimaryKey
-    private int id;
+    private Integer id;
     private String url;
     @Required
     private String name;
-    private String lastModified;
+
+    private String lastModified;    // last modified in API date
+    private Boolean isActive;       // false - if house removed by user
+
     private String coatOfArms;
     private String words;
     private RealmList<HousesTitles> titles = new RealmList<>();
@@ -44,12 +43,14 @@ public class HouseRealm extends RealmObject {
         yearFounded = responce.getFounded();
         diedOut = responce.getDiedOut();
 
+        isActive = true;
+
         Observable.from(responce.getTitles())
                 .map(HousesTitles::new)
                 .subscribe(title -> titles.add(title));
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -87,5 +88,9 @@ public class HouseRealm extends RealmObject {
 
     public String getLastModified() {
         return lastModified;
+    }
+
+    public Boolean getActive() {
+        return isActive;
     }
 }

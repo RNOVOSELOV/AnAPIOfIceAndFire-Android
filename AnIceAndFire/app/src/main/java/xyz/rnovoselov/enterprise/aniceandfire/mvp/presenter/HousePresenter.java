@@ -11,7 +11,7 @@ import dagger.Provides;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponse;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.IHouseView;
@@ -34,10 +34,9 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
         component.inject(this);
 
         getViewState().showProgress();
-        model.getHousesFromNetwork()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber() {
+
+        model.updateHouseDataInRealm()
+                .subscribe(new Subscriber<HouseRealm>() {
                     @Override
                     public void onCompleted() {
                         getViewState().hideProgress();
@@ -51,7 +50,7 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
                     }
 
                     @Override
-                    public void onNext(Object o) {
+                    public void onNext(HouseRealm houseRealm) {
 
                     }
                 });
