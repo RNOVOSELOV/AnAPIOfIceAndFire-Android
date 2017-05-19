@@ -1,5 +1,7 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
+import android.util.Pair;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,15 +52,6 @@ public class DataProvider {
     }
 
     /**
-     * Возвращает время последнего обновления данных о домах на сервере
-     *
-     * @return значение типа {@link String}, в формате "Thu, 01 Jan 1970 00:00:00 GMT"
-     */
-    private String getLastRequestDate() {
-        return preferencesProvider.getLastRequestHousesTime();
-    }
-
-    /**
      * рекурсивная функия для получения списка домов с пагинированных страниц АПИ
      *
      * @param pageNumber   - номер страницы с которой необходимо получить список домов (начинается с 1)
@@ -81,7 +74,7 @@ public class DataProvider {
      * @return поток данных, в качестве испускаемых значений которого является список домов с одной из пагинированных страниц
      */
     private Observable<Response<List<HouseResponse>>> getHousesList() {
-        return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, getLastRequestDate());
+        return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, preferencesProvider.getLastRequestHousesTime());
     }
 
     /**
@@ -107,6 +100,19 @@ public class DataProvider {
     }
 
     //region ================ HOUSES ================
+
+    /**
+     * Метод проверяет есть ли загруженные данные (активные и неактивные) о каких либо домах
+     *
+     * @return true, если есть загруженные данные, иначе false
+     */
+    public boolean isSomeHousesDownloaded() {
+        return realmProvider.isSomeHousesDownloaded();
+    }
+
+    public List<Integer> getListActiveHouses() {
+        return realmProvider.getAllHousesIdList();
+    }
 
     /**
      * Метод трансформирует ответ от АПИ и сохраняет Last-Modified информацию из хедера в обьект {@link HouseResponse}
@@ -165,19 +171,6 @@ public class DataProvider {
     }
 
     /**
-     * Метод получает информацию о доме с АПИ и сохранят (или обновляет) данные в Realm
-     *
-     * @param houseId идентификатор дома, который необходимо загрузить с АПИ
-     * @return метод возвращает пустую последовательность, загруженные данные сохраняются в Realm
-     */
-    public Observable<HouseRealm> getHouseFromNetworkAndSaveToRealmObs(int houseId) {
-        return NetworkStatusChecker.isInternetAvailable()
-                .observeOn(Schedulers.io())
-                .flatMap(aBoolean -> aBoolean ? restService.getHouse(getLastRequestDate(), String.valueOf(houseId)) : Observable.error(new NetworkAvailableError()))
-                .flatMap(this::processApiHouseResponce);
-    }
-
-    /**
      * Метод получает информацию о списке домов с АПИ и сохранят (или обновляет) данные в Realm
      *
      * @param housesId {@link List} домов типа {@link Integer}: идентификаторы домов, которые необходимо загрузить с АПИ
@@ -185,15 +178,23 @@ public class DataProvider {
      */
     public Observable<HouseRealm> getHouseFromNetworkAndSaveToRealmObs(List<Integer> housesId) {
         return NetworkStatusChecker.isInternetAvailable()
-                .observeOn(Schedulers.io())
                 .flatMap(aBoolean -> aBoolean ? Observable.from(housesId) : Observable.error(new NetworkAvailableError()))
-                .flatMap(integer -> restService.getHouse(getLastRequestDate(), String.valueOf(integer)))
+                .flatMap(integer -> {
+                    Pair<Integer, String> pair = Pair.create(integer, realmProvider.getHouseLastModifiedDate(integer));
+                    return Observable.just(pair);
+                })
+                .observeOn(Schedulers.io())
+                .flatMap(integerStringPair -> restService.getHouse(integerStringPair.second, integerStringPair.first))
                 .flatMap(this::processApiHouseResponce);
     }
 
+    /**
+     * Метод обновляет информацию о всех загруженных и активных домах
+     *
+     * @return метод возвращает пустую последовательность, обновляя информацию о всех загруженных в Realm домах
+     */
     public Observable<HouseRealm> updateHousesInfo() {
-        return realmProvider.getAllHousesId()
-                .subscribeOn(AndroidSchedulers.mainThread())
+        return realmProvider.getAllHousesIdObs()
                 .toList()
                 .flatMap(this::getHouseFromNetworkAndSaveToRealmObs);
     }

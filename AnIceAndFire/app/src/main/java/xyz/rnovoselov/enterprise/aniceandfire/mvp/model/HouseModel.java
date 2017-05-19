@@ -14,7 +14,16 @@ public class HouseModel extends AbstractModel {
     public HouseModel() {
     }
 
+    public boolean isSomeHousesDownloaded() {
+        return dataProvider.isSomeHousesDownloaded();
+    }
+
     public Observable<HouseRealm> updateHouseDataInRealm() {
         return dataProvider.updateHousesInfo();
+        //return dataProvider.getHouseFromNetworkAndSaveToRealmObs(7);
+    }
+
+    public List<Integer> getActiveHousesList () {
+        return dataProvider.getListActiveHouses();
     }
 }

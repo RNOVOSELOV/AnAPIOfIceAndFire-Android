@@ -23,7 +23,7 @@ public interface RestService {
     Observable<Response<List<HouseResponse>>> getHouses(@Header(Constants.HEADER_IF_MODIFIED_SINCE) String lastModifiedDate, @Query("page") int pageNumber, @Query("pageSize") int housesCount);
 
     @GET("houses/{id}")
-    Observable<Response<HouseResponse>> getHouse(@Header(Constants.HEADER_IF_MODIFIED_SINCE) String lastModifiedDate, @Path("id") String houseId);
+    Observable<Response<HouseResponse>> getHouse(@Header(Constants.HEADER_IF_MODIFIED_SINCE) String lastModifiedDate, @Path("id") int houseId);
 
     @GET("characters/{id}")
     Observable<Response<CharacterResponse>> getCharacterById(@Path("id") String characterId);

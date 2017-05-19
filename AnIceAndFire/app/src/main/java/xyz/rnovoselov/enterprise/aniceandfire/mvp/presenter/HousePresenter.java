@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import dagger.Provides;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
@@ -33,27 +32,31 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
         Component component = createDaggerComponent();
         component.inject(this);
 
-        getViewState().showProgress();
+        if (model.isSomeHousesDownloaded()) {
+            getViewState().showProgress();
+            model.updateHouseDataInRealm()
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<HouseRealm>() {
+                        @Override
+                        public void onCompleted() {
+                            getViewState().hideProgress();
+                        }
 
-        model.updateHouseDataInRealm()
-                .subscribe(new Subscriber<HouseRealm>() {
-                    @Override
-                    public void onCompleted() {
-                        getViewState().hideProgress();
-                    }
+                        @Override
+                        public void onError(Throwable t) {
+                            getViewState().showError(t);
+                            getViewState().hideProgress();
+                            Log.e(TAG, "ERROR: " + t.toString());
+                        }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        getViewState().showError(t);
-                        getViewState().hideProgress();
-                        Log.e(TAG, "ERROR: " + t.toString());
-                    }
+                        @Override
+                        public void onNext(HouseRealm houseRealm) {
 
-                    @Override
-                    public void onNext(HouseRealm houseRealm) {
-
-                    }
-                });
+                        }
+                    });
+        } else {
+//            getViewState().showDownloadHouseInfoDialog(new HashMap<>());
+        }
     }
 
     //region ================ DI ================
