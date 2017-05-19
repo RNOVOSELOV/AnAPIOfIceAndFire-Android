@@ -10,9 +10,7 @@ import javax.inject.Inject;
 import dagger.Provides;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import xyz.rnovoselov.enterprise.aniceandfire.data.providers.DataProvider;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.IHouseView;
@@ -25,7 +23,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 @InjectViewState
 public class HousePresenter extends MvpPresenter<IHouseView> {
 
-    private static final String TAG = Constants.TAG_PREFIX + DataProvider.class.getSimpleName();
+    private static final String TAG = Constants.TAG_PREFIX + HousePresenter.class.getSimpleName();
 
     @Inject
     HouseModel model;
@@ -34,28 +32,31 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
         Component component = createDaggerComponent();
         component.inject(this);
 
-        getViewState().showProgress();
-        model.getHousesFromNetwork()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<HouseResponce>() {
-                    @Override
-                    public void onCompleted() {
-                        getViewState().hideProgress();
-                    }
+        if (model.isSomeHousesDownloaded()) {
+            getViewState().showProgress();
+            model.updateHouseDataInRealm()
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<HouseRealm>() {
+                        @Override
+                        public void onCompleted() {
+                            getViewState().hideProgress();
+                        }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        getViewState().showError(t);
-                        getViewState().hideProgress();
-                        Log.e(TAG, "ERROR: " + t.toString());
-                    }
+                        @Override
+                        public void onError(Throwable t) {
+                            getViewState().showError(t);
+                            getViewState().hideProgress();
+                            Log.e(TAG, "ERROR: " + t.toString());
+                        }
 
-                    @Override
-                    public void onNext(HouseResponce houseResponce) {
+                        @Override
+                        public void onNext(HouseRealm houseRealm) {
 
-                    }
-                });
+                        }
+                    });
+        } else {
+//            getViewState().showDownloadHouseInfoDialog(new HashMap<>());
+        }
     }
 
     //region ================ DI ================
@@ -67,17 +68,17 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
     }
 
     @dagger.Module
-    public class Module {
+    class Module {
         @Provides
         @DaggerScope(HousePresenter.class)
-        HouseModel provideSplashModel() {
+        HouseModel provideHouseModel() {
             return new HouseModel();
         }
     }
 
-    @dagger.Component(modules = HousePresenter.Module.class)
+    @dagger.Component(modules = Module.class)
     @DaggerScope(HousePresenter.class)
-    public interface Component {
+    interface Component {
         void inject(HousePresenter presenter);
     }
 

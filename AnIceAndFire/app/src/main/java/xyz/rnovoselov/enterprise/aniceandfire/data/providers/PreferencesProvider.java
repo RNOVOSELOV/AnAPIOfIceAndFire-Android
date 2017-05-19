@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 import static xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig.DEFAULT_LAST_UPDATE_DATE;
@@ -27,7 +28,7 @@ public class PreferencesProvider {
      *
      * @param lastModified - время, полученное с сервера
      */
-    public void saveLastModifiedTime(String lastModified) {
+    public void saveLastRequestHousesTime(String lastModified) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(HOUSES_LAST_UPDATED_TIMESTAMP, lastModified);
         editor.apply();
@@ -39,8 +40,8 @@ public class PreferencesProvider {
      * @return время последнего обновления данных
      */
     @NonNull
-    public String getLastProductUpdate() {
-        //return "Mon, 08 May 2017 17:18:47 GMT";
-        return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
+    public String getLastRequestHousesTime() {
+        return AppConfig.DEFAULT_LAST_UPDATE_DATE;
+        //return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
     }
 }

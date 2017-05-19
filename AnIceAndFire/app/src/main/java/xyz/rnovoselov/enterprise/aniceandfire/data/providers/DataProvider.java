@@ -1,16 +1,22 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
+import android.util.Pair;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import retrofit2.Response;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.ApiError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponce;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponse;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.CharacterRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataProviderComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DataProviderComponent;
@@ -46,15 +52,6 @@ public class DataProvider {
     }
 
     /**
-     * Возвращает время последнего обновления данных о домах на сервере
-     *
-     * @return значение типа {@link String}, в формате "Thu, 01 Jan 1970 00:00:00 GMT"
-     */
-    private String getLastModifiedTimestamp() {
-        return preferencesProvider.getLastProductUpdate();
-    }
-
-    /**
      * рекурсивная функия для получения списка домов с пагинированных страниц АПИ
      *
      * @param pageNumber   - номер страницы с которой необходимо получить список домов (начинается с 1)
@@ -62,13 +59,13 @@ public class DataProvider {
      *                     Передаем дату последней загрухки данных в формате "Thu, 01 Jan 1970 00:00:00 GMT", чтобы сервер отправил нам данные только в случае их изменения
      * @return поток данных со списком всех домов
      */
-    private Observable<Response<List<HouseResponce>>> getHousesList(int pageNumber, String lastModified) {
+    private Observable<Response<List<HouseResponse>>> getHousesList(int pageNumber, String lastModified) {
         if (pageNumber == 0) {
             return Observable.empty();
         }
         return restService.getHouses(lastModified, pageNumber, AppConfig.HOUSES_PER_QUERY)
                 .flatMap(listResponse -> Observable.just(listResponse)
-                        .mergeWith(getHousesList(RestUtils.getNextHousePageNumber(pageNumber, listResponse.headers().get("link")), lastModified)));
+                        .mergeWith(getHousesList(RestUtils.getNextHousePageNumber(pageNumber, listResponse.headers().get(Constants.HEADER_LINK)), lastModified)));
     }
 
     /**
@@ -76,23 +73,132 @@ public class DataProvider {
      *
      * @return поток данных, в качестве испускаемых значений которого является список домов с одной из пагинированных страниц
      */
-    private Observable<Response<List<HouseResponce>>> getHousesList() {
-        return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, getLastModifiedTimestamp());
+    private Observable<Response<List<HouseResponse>>> getHousesList() {
+        return getHousesList(AppConfig.HOUSES_START_PAGE_NUMBER, preferencesProvider.getLastRequestHousesTime());
     }
 
     /**
      * Получаем список всех домов с АПИ
      *
-     * @return поток данных типа {@link HouseResponce}
+     * @return поток данных типа {@link HouseResponse}
      */
-    public Observable<HouseResponce> getHousesFromNetworkObs() {
+    public Observable<HouseResponse> getHousesFromNetworkObs() {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? getHousesList() : Observable.error(new NetworkAvailableError()))
+                .doOnNext(listResponse -> {
+                    String requestDate = listResponse.headers().get(Constants.HEADER_DATE);
+                    if (!(requestDate == null || requestDate.isEmpty())) {
+                        preferencesProvider.saveLastRequestHousesTime(requestDate);
+                    }
+                })
                 .compose(new RestCallTransformer<>())
                 .flatMap(Observable::from)
                 .map(HouseRealm::new)
                 .toList()
-                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
+//                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
                 .flatMap(houseRealms -> Observable.empty());
     }
+
+    //region ================ HOUSES ================
+
+    /**
+     * Метод проверяет есть ли загруженные данные (активные и неактивные) о каких либо домах
+     *
+     * @return true, если есть загруженные данные, иначе false
+     */
+    public boolean isSomeHousesDownloaded() {
+        return realmProvider.isSomeHousesDownloaded();
+    }
+
+    public List<Integer> getListActiveHouses() {
+        return realmProvider.getAllHousesIdList();
+    }
+
+    /**
+     * Метод трансформирует ответ от АПИ и сохраняет Last-Modified информацию из хедера в обьект {@link HouseResponse}
+     *
+     * @param response ответ от АПИ
+     * @return последовательность обьектов {@link HouseResponse}, либо ошибку
+     */
+    private Observable<HouseResponse> transformRetrofitHouseResponce(Response<HouseResponse> response) {
+        switch (response.code()) {
+            case 200:
+                String lastModified = response.headers().get(Constants.HEADER_LAST_MODIFIED);
+                return Observable.just(response.body())
+                        .doOnNext(houseResponse -> houseResponse.setLastModified(lastModified));
+            case 304:
+                return Observable.empty();
+            default:
+                return Observable.error(new ApiError(response.code()));
+        }
+    }
+
+    /**
+     * Метод загружает информацию о персонаже
+     *
+     * @param swornMembers список персонажей, о которых необходимо загрузить информацию
+     * @return список обьектов типа {@link CharacterRealm}
+     */
+    private Observable<List<CharacterRealm>> getCharactersFromNetworkObs(List<String> swornMembers) {
+        return Observable.from(swornMembers)
+                .map(s -> s.split("/"))
+                .map(strings -> strings[strings.length - 1])
+                .flatMap(s -> restService.getCharacterById(s))
+                .compose(new RestCallTransformer<>())
+                .map(CharacterRealm::new)
+                .toList();
+    }
+
+    /**
+     * Метод обрабатывает ответ запроса информации о доме с АПИ
+     *
+     * @param response ответ от REST сервиса, содержащий информацию о доме
+     * @return возвращат пустую последовательность, информация одоме сохраняется в Realm
+     */
+    private Observable<HouseRealm> processApiHouseResponce(Response<HouseResponse> response) {
+        return Observable.just(response)
+                .flatMap(this::transformRetrofitHouseResponce)
+                .flatMap(houseResponse ->
+                        Observable.zip(Observable.just(houseResponse), getCharactersFromNetworkObs(houseResponse.getSwornMembers()),
+                                (houseResponse1, characterRealms) -> {
+                                    HouseRealm houseRealm = new HouseRealm(houseResponse1);
+                                    houseRealm.getCharacters().addAll(characterRealms);
+                                    return houseRealm;
+                                }))
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(houseRealm -> realmProvider.saveHouseResponceToRealm(houseRealm))
+                .flatMap(houseRealm -> Observable.empty());
+    }
+
+    /**
+     * Метод получает информацию о списке домов с АПИ и сохранят (или обновляет) данные в Realm
+     *
+     * @param housesId {@link List} домов типа {@link Integer}: идентификаторы домов, которые необходимо загрузить с АПИ
+     * @return метод возвращает пустую последовательность, загруженные данные сохраняются в Realm
+     */
+    public Observable<HouseRealm> getHouseFromNetworkAndSaveToRealmObs(List<Integer> housesId) {
+        return NetworkStatusChecker.isInternetAvailable()
+                .flatMap(aBoolean -> aBoolean ? Observable.from(housesId) : Observable.error(new NetworkAvailableError()))
+                .flatMap(integer -> {
+                    Pair<Integer, String> pair = Pair.create(integer, realmProvider.getHouseLastModifiedDate(integer));
+                    return Observable.just(pair);
+                })
+                .observeOn(Schedulers.io())
+                .flatMap(integerStringPair -> restService.getHouse(integerStringPair.second, integerStringPair.first))
+                .flatMap(this::processApiHouseResponce);
+    }
+
+    /**
+     * Метод обновляет информацию о всех загруженных и активных домах
+     *
+     * @return метод возвращает пустую последовательность, обновляя информацию о всех загруженных в Realm домах
+     */
+    public Observable<HouseRealm> updateHousesInfo() {
+        return realmProvider.getAllHousesIdObs()
+                .toList()
+                .flatMap(this::getHouseFromNetworkAndSaveToRealmObs);
+    }
+
+    //endregion
+
 }

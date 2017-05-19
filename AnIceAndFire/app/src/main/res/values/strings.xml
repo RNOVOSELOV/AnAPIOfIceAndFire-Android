@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AnIceAndFire</string>
     <string name="error_net_unavailable">Интернет недоступен. Попробуйте позже.</string>
+    <string name="error_no_houses_downloaded">Нет загруженных домов.</string>
 </resources>

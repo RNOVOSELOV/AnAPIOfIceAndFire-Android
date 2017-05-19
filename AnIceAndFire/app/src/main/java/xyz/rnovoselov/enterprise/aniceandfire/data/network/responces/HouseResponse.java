@@ -2,28 +2,33 @@ package xyz.rnovoselov.enterprise.aniceandfire.data.network.responces;
 
 import java.util.List;
 
+import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
+import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
+
 /**
  * Created by roman on 04.05.17.
  */
 
-public class HouseResponce {
+public class HouseResponse {
 
-    public String url;
-    public String name;
-    public String region;
-    public String coatOfArms;
-    public String words;
-    public List<String> titles = null;
-    public List<String> seats = null;
-    public String currentLord;
-    public String heir;
-    public String overlord;
-    public String founded;
-    public String founder;
-    public String diedOut;
-    public List<String> ancestralWeapons = null;
-    public List<String> cadetBranches = null;
-    public List<String> swornMembers = null;
+    private String url;
+    private String name;
+    private String region;
+    private String coatOfArms;
+    private String words;
+    private List<String> titles = null;
+    private List<String> seats = null;
+    private String currentLord;
+    private String heir;
+    private String overlord;
+    private String founded;
+    private String founder;
+    private String diedOut;
+    private List<String> ancestralWeapons = null;
+    private List<String> cadetBranches = null;
+    private List<String> swornMembers = null;
+
+    private String lastModified = AppConfig.DEFAULT_LAST_UPDATE_DATE;
 
     public String getUrl() {
         return url;
@@ -87,5 +92,13 @@ public class HouseResponce {
 
     public List<String> getSwornMembers() {
         return swornMembers;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 }
