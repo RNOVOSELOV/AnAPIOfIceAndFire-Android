@@ -1,29 +1,24 @@
 package xyz.rnovoselov.enterprise.aniceandfire.ui.activities;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import xyz.rnovoselov.enterprise.aniceandfire.R;
-import xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter.SplashPresenter;
-import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter.HousePresenter;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.IHouseView;
 
-public class SplashActivity extends BaseActivity implements ISplashView {
+public class SplashActivity extends BaseActivity implements IHouseView {
 
     @BindView(R.id.coordinator_splash)
     CoordinatorLayout coordinator;
 
     @InjectPresenter
-    SplashPresenter presenter;
+    HousePresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +45,7 @@ public class SplashActivity extends BaseActivity implements ISplashView {
     }
 
     @Override
-    public void showError(Exception exception) {
+    public void showError(Throwable exception) {
         showMessage(exception.getMessage());
     }
 

@@ -1,13 +1,12 @@
-package xyz.rnovoselov.enterprise.aniceandfire.data.managers;
+package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
-import static xyz.rnovoselov.enterprise.aniceandfire.utils.Constants.DEFAULT_LAST_UPDATE_DATE;
+import static xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig.DEFAULT_LAST_UPDATE_DATE;
 import static xyz.rnovoselov.enterprise.aniceandfire.utils.Constants.HOUSES_LAST_UPDATED_TIMESTAMP;
 
 
@@ -15,11 +14,11 @@ import static xyz.rnovoselov.enterprise.aniceandfire.utils.Constants.HOUSES_LAST
  * Created by roman on 27.04.17.
  */
 
-public class PreferencesManager {
+public class PreferencesProvider {
 
     private SharedPreferences preferences;
 
-    public PreferencesManager(Context context) {
+    public PreferencesProvider(Context context) {
         preferences = context.getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
@@ -41,6 +40,7 @@ public class PreferencesManager {
      */
     @NonNull
     public String getLastProductUpdate() {
+        //return "Mon, 08 May 2017 17:18:47 GMT";
         return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
     }
 }
