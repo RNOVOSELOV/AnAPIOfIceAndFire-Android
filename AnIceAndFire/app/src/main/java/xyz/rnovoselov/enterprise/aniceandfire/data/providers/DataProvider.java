@@ -95,7 +95,7 @@ public class DataProvider {
                 .flatMap(Observable::from)
                 .map(HouseRealm::new)
                 .toList()
-//                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
+                .doOnNext(houseRealms -> realmProvider.saveHouseResponceToRealm(houseRealms))
                 .flatMap(houseRealms -> Observable.empty());
     }
 

@@ -41,7 +41,6 @@ public class PreferencesProvider {
      */
     @NonNull
     public String getLastRequestHousesTime() {
-        return AppConfig.DEFAULT_LAST_UPDATE_DATE;
-        //return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
+        return preferences.getString(HOUSES_LAST_UPDATED_TIMESTAMP, DEFAULT_LAST_UPDATE_DATE);
     }
 }

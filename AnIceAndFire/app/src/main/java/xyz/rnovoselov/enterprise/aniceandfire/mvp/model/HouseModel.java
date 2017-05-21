@@ -20,7 +20,6 @@ public class HouseModel extends AbstractModel {
 
     public Observable<HouseRealm> updateHouseDataInRealm() {
         return dataProvider.updateHousesInfo();
-        //return dataProvider.getHouseFromNetworkAndSaveToRealmObs(7);
     }
 
     public List<Integer> getActiveHousesList () {
