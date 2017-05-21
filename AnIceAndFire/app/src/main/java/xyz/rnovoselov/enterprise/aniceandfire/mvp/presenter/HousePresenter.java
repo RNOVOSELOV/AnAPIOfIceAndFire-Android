@@ -32,6 +32,11 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
         Component component = createDaggerComponent();
         component.inject(this);
 
+    }
+
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
         if (model.isSomeHousesDownloaded()) {
             getViewState().showProgress();
             model.updateHouseDataInRealm()
@@ -51,7 +56,7 @@ public class HousePresenter extends MvpPresenter<IHouseView> {
 
                         @Override
                         public void onNext(HouseRealm houseRealm) {
-
+                            getViewState().showMessage(houseRealm.getName());
                         }
                     });
         } else {

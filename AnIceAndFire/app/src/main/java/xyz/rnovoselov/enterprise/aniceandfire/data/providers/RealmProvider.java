@@ -28,6 +28,12 @@ public class RealmProvider {
         realm.close();
     }
 
+    public void saveHouseResponceToRealm(List<HouseRealm> houseRealm) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(realm1 -> realm1.insertOrUpdate(houseRealm));
+        realm.close();
+    }
+
     public Observable<Integer> getAllHousesIdObs() {
         RealmResults<HouseRealm> managedHouses = getQueryRealmInstance().where(HouseRealm.class)
                 .equalTo("isActive", true)
@@ -48,10 +54,15 @@ public class RealmProvider {
         return list;
     }
 
-    public String getHouseLastModifiedDate(int houseId) {
+    public HouseRealm getHouseById(int id) {
         HouseRealm house = getQueryRealmInstance().where(HouseRealm.class)
-                .equalTo("id", houseId)
+                .equalTo("id", id)
                 .findFirst();
+        return house;
+    }
+
+    public String getHouseLastModifiedDate(int houseId) {
+        HouseRealm house = getHouseById(houseId);
         if (house == null) {
             return AppConfig.DEFAULT_LAST_UPDATE_DATE;
         }
