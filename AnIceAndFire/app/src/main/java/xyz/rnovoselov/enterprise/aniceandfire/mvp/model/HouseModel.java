@@ -22,7 +22,7 @@ public class HouseModel extends AbstractModel {
         return dataProvider.updateHousesInfo();
     }
 
-    public List<Integer> getActiveHousesList () {
-        return dataProvider.getListActiveHouses();
+    public Observable<HouseRealm> getHousesAndSaveToRealm(List<Integer> housesId) {
+        return dataProvider.getHouseFromNetworkAndSaveToRealmObs(housesId);
     }
 }

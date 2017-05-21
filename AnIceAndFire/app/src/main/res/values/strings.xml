@@ -2,4 +2,6 @@
     <string name="app_name">AnIceAndFire</string>
     <string name="error_net_unavailable">Интернет недоступен. Попробуйте позже.</string>
     <string name="error_no_houses_downloaded">Нет загруженных домов.</string>
+    <string name="houses_update_info_message">Обновление данных с сервера …</string>
+    <string name="houses_get_info_message">Получение данных с сервера …</string>
 </resources>

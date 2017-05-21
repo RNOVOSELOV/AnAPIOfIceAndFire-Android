@@ -2,13 +2,18 @@ package xyz.rnovoselov.enterprise.aniceandfire.ui.activities;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import xyz.rnovoselov.enterprise.aniceandfire.R;
+import xyz.rnovoselov.enterprise.aniceandfire.ui.dialogs.DialogProgress;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 /**
@@ -19,28 +24,18 @@ public class BaseActivity extends MvpAppCompatActivity {
 
     protected String TAG = Constants.TAG_PREFIX + getClass().getSimpleName();
 
-    protected AlertDialog progressDialog;
+    protected DialogProgress progressDialog = new DialogProgress();
 
     protected void showProgressDialog() {
-        if (progressDialog == null) {
-            View view = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null);
-            progressDialog = new AlertDialog.Builder(this)
-                    .setCancelable(false)
-                    .setView(view)
-                    .create();
-            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-        if (!progressDialog.isShowing()) {
-            progressDialog.show();
-        }
+        progressDialog.show(this);
     }
 
     protected void hideProgressDialog() {
-        if (progressDialog != null) {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-        }
+        progressDialog.hide();
+    }
+
+    protected void showProgressMessage(String text) {
+        progressDialog.showProgressMessage(text);
     }
 
     @Override

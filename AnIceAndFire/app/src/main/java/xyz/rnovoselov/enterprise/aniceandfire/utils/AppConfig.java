@@ -17,5 +17,14 @@ public class AppConfig {
     public static final int MAX_READ_TIMEOUT = 5000;
     public static final int MAX_WRITE_TIMEOUT = 5000;
 
-    public static final int[] DEFAULT_HOUSES = {7, 17, 169, 229, 362, 378, 395};
+    public static final int[] DEFAULT_HOUSES_ID = {7, 17, 169, 229, 362, 378, 395};
+    public static final String[] DEFAULT_HOUSES = {
+            "House Arryn of the Eyrie",
+            "House Baratheon of Storm's End",
+            "House Greyjoy of Pyke",
+            "House Lannister of Casterly Rock",
+            "House Stark of Winterfell",
+            "House Targaryen of King's Landing",
+            "House Tully of Riverrun"
+    };
 }
