@@ -10,6 +10,8 @@ import android.support.v4.app.ActivityCompat;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -74,15 +76,30 @@ public class SplashActivity extends BaseActivity implements ISplashView {
     }
 
     @Override
-    public void showDownloadHouseInfoDialog(final List<Integer> selectedItems) {
+    public void showDownloadHouseInfoDialog(final List<Integer> selected) {
+
+        List<String> housesList = new ArrayList<>(AppConfig.getDefaultHousesMap().keySet());    // Список ключей мапы
+        Collections.sort(housesList, String::compareTo);                                        // Сортировка списка
+        String[] housesArray = housesList.toArray(new String[housesList.size()]);               // Получение массива из списка
+        boolean[] isCheckedFields = new boolean[housesArray.length];
+
+        for (int i = 0; i < housesArray.length; i++) {
+            if (selected.contains(AppConfig.getDefaultHousesMap().get(housesArray[i]))) {
+                isCheckedFields[i] = true;
+            } else {
+                isCheckedFields[i] = false;
+            }
+        }
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
                 .setCancelable(false)
                 .setTitle("Выберите дом для загрузки")
-                .setMultiChoiceItems(AppConfig.DEFAULT_HOUSES, null, (DialogInterface dialog13, int which, boolean isChecked) -> {
+                .setMultiChoiceItems(housesArray, isCheckedFields, (DialogInterface dialog13, int which, boolean isChecked) -> {
+                    Integer houseId = AppConfig.getDefaultHousesMap().get(housesArray[which]);
                     if (isChecked) {
-                        housePresenter.addHouseSelectedItem(which);
-                    } else if (selectedItems.contains(which)) {
-                        housePresenter.removeHouseSelectedItem(which);
+                        housePresenter.addHouseSelectedItem(houseId);
+                    } else {
+                        housePresenter.removeHouseSelectedItem(houseId);
                     }
                 })
                 .setPositiveButton("Загрузить", (dialog12, which) -> housePresenter.startDownloadDefaultHouses())

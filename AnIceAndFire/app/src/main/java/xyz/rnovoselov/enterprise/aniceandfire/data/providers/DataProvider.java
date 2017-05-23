@@ -1,7 +1,5 @@
 package xyz.rnovoselov.enterprise.aniceandfire.data.providers;
 
-import android.util.Pair;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,6 +14,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.ApiError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.NetworkAvailableError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponse;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.dto.HouseDataDto;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.CharacterRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.DaggerDataProviderComponent;
@@ -152,11 +151,14 @@ public class DataProvider {
     /**
      * Метод обрабатывает ответ запроса информации о доме с АПИ
      *
-     * @param response ответ от REST сервиса, содержащий информацию о доме
+     * @param houseDto обьект типа {@link HouseDataDto}, содержащий необходимые для загрузки/обновления данные о доме
      * @return возвращат пустую последовательность, информация одоме сохраняется в Realm
      */
-    private Observable<HouseRealm> processApiHouseResponce(Response<HouseResponse> response) {
-        return Observable.just(response)
+    private Observable<HouseDataDto> processApiHouseResponce(HouseDataDto houseDto) {
+
+        return Observable.just(houseDto)
+                .observeOn(Schedulers.io())
+                .flatMap(houseDataDto -> restService.getHouse(houseDataDto.getLastModifiedDate(), houseDataDto.getId()))
                 .flatMap(this::transformRetrofitHouseResponce)
                 .flatMap(houseResponse ->
                         Observable.zip(Observable.just(houseResponse), getCharactersFromNetworkObs(houseResponse.getSwornMembers()),
@@ -167,7 +169,8 @@ public class DataProvider {
                                 }))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(houseRealm -> realmProvider.saveHouseResponceToRealm(houseRealm))
-                .flatMap(houseRealm -> Observable.empty());
+                .map(HouseDataDto::new)
+                .defaultIfEmpty(houseDto);
     }
 
     /**
@@ -176,15 +179,13 @@ public class DataProvider {
      * @param housesId {@link List} домов типа {@link Integer}: идентификаторы домов, которые необходимо загрузить с АПИ
      * @return метод возвращает пустую последовательность, загруженные данные сохраняются в Realm
      */
-    public Observable<HouseRealm> getHouseFromNetworkAndSaveToRealmObs(List<Integer> housesId) {
+    public Observable<HouseDataDto> getHouseFromNetworkAndSaveToRealmObs(List<Integer> housesId) {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? Observable.from(housesId) : Observable.error(new NetworkAvailableError()))
                 .flatMap(integer -> {
-                    Pair<Integer, String> pair = Pair.create(integer, realmProvider.getHouseLastModifiedDate(integer));
-                    return Observable.just(pair);
+                    HouseDataDto houseData = new HouseDataDto(integer, realmProvider.getHouseLastModifiedDate(integer));
+                    return Observable.just(houseData);
                 })
-                .observeOn(Schedulers.io())
-                .flatMap(integerStringPair -> restService.getHouse(integerStringPair.second, integerStringPair.first))
                 .flatMap(this::processApiHouseResponce);
     }
 
@@ -193,7 +194,7 @@ public class DataProvider {
      *
      * @return метод возвращает пустую последовательность, обновляя информацию о всех загруженных в Realm домах
      */
-    public Observable<HouseRealm> updateHousesInfo() {
+    public Observable<HouseDataDto> updateHousesInfo() {
         return realmProvider.getAllHousesIdObs()
                 .toList()
                 .flatMap(this::getHouseFromNetworkAndSaveToRealmObs);

@@ -3,7 +3,7 @@ package xyz.rnovoselov.enterprise.aniceandfire.mvp.model;
 import java.util.List;
 
 import rx.Observable;
-import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.dto.HouseDataDto;
 
 /**
  * Created by roman on 01.05.17.
@@ -18,11 +18,11 @@ public class HouseModel extends AbstractModel {
         return dataProvider.isSomeHousesDownloaded();
     }
 
-    public Observable<HouseRealm> updateHouseDataInRealm() {
+    public Observable<HouseDataDto> updateHouseDataInRealm() {
         return dataProvider.updateHousesInfo();
     }
 
-    public Observable<HouseRealm> getHousesAndSaveToRealm(List<Integer> housesId) {
+    public Observable<HouseDataDto> getHousesAndSaveToRealm(List<Integer> housesId) {
         return dataProvider.getHouseFromNetworkAndSaveToRealmObs(housesId);
     }
 }

@@ -1,5 +1,8 @@
 package xyz.rnovoselov.enterprise.aniceandfire.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by roman on 01.05.17.
  */
@@ -17,6 +20,26 @@ public class AppConfig {
     public static final int MAX_READ_TIMEOUT = 5000;
     public static final int MAX_WRITE_TIMEOUT = 5000;
 
+    private static class DefaultHousesHolder {
+        private final static Map<String, Integer> defaultHouses = new HashMap<>();
+
+        static {
+            defaultHouses.put("House Arryn of the Eyrie", 7);
+            defaultHouses.put("House Baratheon of Storm's End", 17);
+            defaultHouses.put("House Greyjoy of Pyke", 169);
+            defaultHouses.put("House Lannister of Casterly Rock", 229);
+            defaultHouses.put("House Stark of Winterfell", 362);
+            defaultHouses.put("House Targaryen of King's Landing", 378);
+            defaultHouses.put("House Tully of Riverrun", 395);
+        }
+    }
+
+    public static Map<String, Integer> getDefaultHousesMap() {
+        return DefaultHousesHolder.defaultHouses;
+    }
+}
+
+/*
     public static final int[] DEFAULT_HOUSES_ID = {7, 17, 169, 229, 362, 378, 395};
     public static final String[] DEFAULT_HOUSES = {
             "House Arryn of the Eyrie",
@@ -27,4 +50,4 @@ public class AppConfig {
             "House Targaryen of King's Landing",
             "House Tully of Riverrun"
     };
-}
+*/

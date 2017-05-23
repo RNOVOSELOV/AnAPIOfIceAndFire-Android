@@ -21,7 +21,7 @@ public interface ISplashView extends MvpView {
 
     void showError(Throwable exception);
 
-    void showDownloadHouseInfoDialog(List<Integer> selectedItems);
+    void showDownloadHouseInfoDialog(final List<Integer> selected);
 
     void openMainActivity();
 

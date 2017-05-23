@@ -17,12 +17,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.R;
 import xyz.rnovoselov.enterprise.aniceandfire.data.providers.ResourceProvider;
-import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
+import xyz.rnovoselov.enterprise.aniceandfire.data.storage.dto.HouseDataDto;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.AppComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
-import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
 /**
@@ -40,7 +39,7 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
     @Inject
     ResourceProvider resourceProvider;
 
-    private List<Integer> defaultHousesSelectedItems = new ArrayList<>(7);
+    private List<Integer> defaultHousesSelectedItems;
 
     public HousePresenter() {
         Component component = createDaggerComponent();
@@ -56,7 +55,7 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
             getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_update_info_message));
             model.updateHouseDataInRealm()
                     .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<HouseRealm>() {
+                    .subscribe(new Subscriber<HouseDataDto>() {
                         @Override
                         public void onCompleted() {
                             getViewState().hideProgress();
@@ -72,11 +71,12 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
                         }
 
                         @Override
-                        public void onNext(HouseRealm houseRealm) {
+                        public void onNext(HouseDataDto houseDataDto) {
 
                         }
                     });
         } else {
+            defaultHousesSelectedItems = new ArrayList<>();
             getViewState().showDownloadHouseInfoDialog(defaultHousesSelectedItems);
         }
     }
@@ -90,6 +90,10 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
     }
 
     public void startDownloadDefaultHouses() {
+
+        Log.e(TAG, String.valueOf(defaultHousesSelectedItems));
+
+        /*
         for (int i = 0; i < defaultHousesSelectedItems.size(); i++) {
             defaultHousesSelectedItems.set(i, AppConfig.DEFAULT_HOUSES_ID[defaultHousesSelectedItems.get(i)]);
         }
@@ -98,7 +102,7 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
         getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message));
         model.getHousesAndSaveToRealm(defaultHousesSelectedItems)
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<HouseRealm>() {
+                .subscribe(new Subscriber<HouseDataDto>() {
                     @Override
                     public void onCompleted() {
                         getViewState().hideProgress();
@@ -114,10 +118,11 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
                     }
 
                     @Override
-                    public void onNext(HouseRealm houseRealm) {
+                    public void onNext(HouseDataDto houseDataDto) {
 
                     }
                 });
+                */
     }
 
     //region ================ DI ================
