@@ -59,4 +59,5 @@
     <dimen name="size_small_24">24dp</dimen>
     <dimen name="margin_72">72dp</dimen>
     <dimen name="size_little">1dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
