@@ -25,4 +25,8 @@ public class HouseModel extends AbstractModel {
     public Observable<HouseDataDto> getHousesAndSaveToRealm(List<Integer> housesId) {
         return dataProvider.getHouseFromNetworkAndSaveToRealmObs(housesId);
     }
+
+    public String getHouseName(int id) {
+        return dataProvider.getHouseNameFromRealm(id);
+    }
 }

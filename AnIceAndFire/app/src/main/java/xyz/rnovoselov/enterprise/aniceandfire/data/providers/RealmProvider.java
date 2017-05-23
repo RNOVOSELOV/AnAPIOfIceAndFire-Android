@@ -55,10 +55,9 @@ public class RealmProvider {
     }
 
     public HouseRealm getHouseById(int id) {
-        HouseRealm house = getQueryRealmInstance().where(HouseRealm.class)
+        return getQueryRealmInstance().where(HouseRealm.class)
                 .equalTo("id", id)
                 .findFirst();
-        return house;
     }
 
     public String getHouseLastModifiedDate(int houseId) {

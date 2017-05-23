@@ -44,37 +44,13 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
     public HousePresenter() {
         Component component = createDaggerComponent();
         component.inject(this);
-
     }
 
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
         if (model.isSomeHousesDownloaded()) {
-            getViewState().showProgress();
-            getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_update_info_message));
-            model.updateHouseDataInRealm()
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<HouseDataDto>() {
-                        @Override
-                        public void onCompleted() {
-                            getViewState().hideProgress();
-                            getViewState().openMainActivity();
-                        }
-
-                        @Override
-                        public void onError(Throwable t) {
-                            getViewState().showError(t);
-                            getViewState().hideProgress();
-                            getViewState().openMainActivity();
-                            Log.e(TAG, "ERROR: " + t.toString());
-                        }
-
-                        @Override
-                        public void onNext(HouseDataDto houseDataDto) {
-
-                        }
-                    });
+            updateDownloadDefaultHouses();
         } else {
             defaultHousesSelectedItems = new ArrayList<>();
             getViewState().showDownloadHouseInfoDialog(defaultHousesSelectedItems);
@@ -89,41 +65,51 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
         defaultHousesSelectedItems.remove(item);
     }
 
+    private void updateDownloadDefaultHouses() {
+        getViewState().showProgress();
+        getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message));
+        model.updateHouseDataInRealm()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(updateDataSubscriber);
+    }
+
     public void startDownloadDefaultHouses() {
-
-        Log.e(TAG, String.valueOf(defaultHousesSelectedItems));
-
-        /*
-        for (int i = 0; i < defaultHousesSelectedItems.size(); i++) {
-            defaultHousesSelectedItems.set(i, AppConfig.DEFAULT_HOUSES_ID[defaultHousesSelectedItems.get(i)]);
-        }
-
         getViewState().showProgress();
         getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message));
         model.getHousesAndSaveToRealm(defaultHousesSelectedItems)
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<HouseDataDto>() {
-                    @Override
-                    public void onCompleted() {
-                        getViewState().hideProgress();
-                        getViewState().openMainActivity();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        getViewState().showError(t);
-                        getViewState().hideProgress();
-                        getViewState().openMainActivity();
-                        Log.e(TAG, "ERROR: " + t.toString());
-                    }
-
-                    @Override
-                    public void onNext(HouseDataDto houseDataDto) {
-
-                    }
-                });
-                */
+                .subscribe(updateDataSubscriber);
     }
+
+    private Subscriber<HouseDataDto> updateDataSubscriber = new Subscriber<HouseDataDto>() {
+        @Override
+        public void onCompleted() {
+            getViewState().hideProgress();
+            getViewState().openMainActivity();
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            getViewState().showError(t);
+            getViewState().hideProgress();
+            getViewState().openMainActivity();
+            Log.e(TAG, "ERROR: " + t.toString());
+        }
+
+        @Override
+        public void onNext(HouseDataDto houseDataDto) {
+            if (houseDataDto.getName().isEmpty()) {
+                String name = model.getHouseName(houseDataDto.getId());
+                if (!name.isEmpty()) {
+                    getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message)
+                            + "\n" + name);
+                }
+            } else {
+                getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message)
+                        + "\n" + houseDataDto.getName());
+            }
+        }
+    };
 
     //region ================ DI ================
 

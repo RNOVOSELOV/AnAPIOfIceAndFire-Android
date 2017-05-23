@@ -98,7 +98,7 @@ public class DataProvider {
                 .flatMap(houseRealms -> Observable.empty());
     }
 
-    //region ================ HOUSES ================
+    //region ================ REALM ================
 
     /**
      * Метод проверяет есть ли загруженные данные (активные и неактивные) о каких либо домах
@@ -112,6 +112,18 @@ public class DataProvider {
     public List<Integer> getListActiveHouses() {
         return realmProvider.getAllHousesIdList();
     }
+
+    public String getHouseNameFromRealm(int id) {
+        HouseRealm house = realmProvider.getHouseById(id);
+        if (house == null) {
+            return "";
+        }
+        return house.getName();
+    }
+
+    //endregion
+
+    //region ================ API ================
 
     /**
      * Метод трансформирует ответ от АПИ и сохраняет Last-Modified информацию из хедера в обьект {@link HouseResponse}
