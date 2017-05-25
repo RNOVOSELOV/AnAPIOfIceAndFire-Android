@@ -20,6 +20,8 @@ public class AppConfig {
     public static final int MAX_READ_TIMEOUT = 5000;
     public static final int MAX_WRITE_TIMEOUT = 5000;
 
+    public static final float DEFAULT_ASPECT_RATIO_IV = 1.73f;
+
     private static class DefaultHousesHolder {
         private final static Map<String, Integer> defaultHouses = new HashMap<>();
 

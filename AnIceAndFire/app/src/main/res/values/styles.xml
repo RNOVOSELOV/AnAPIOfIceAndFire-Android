@@ -21,20 +21,64 @@
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
-    <style name="progress_theme" parent="android:Theme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:backgroundDimEnabled">false</item>
-    </style>
-
-    <style name="CircularProgress" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/color_accent_progress</item>
-    </style>
-
     <style name="ProgressStyle" parent="Base.Widget.AppCompat.ProgressBar">
         <item name="colorAccent">@color/color_accent_progress</item>
+    </style>
+
+    <style name="CustomCard">
+        <item name="cardBackgroundColor">@android:color/white</item>
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="contentPadding">@dimen/padding_16</item>
+    </style>
+
+    <style name="CustomCard.HouseCard">
+        <item name="android:layout_margin">@dimen/margin_little_8</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CardText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@string/roboto_regular</item>
+    </style>
+
+    <style name="CardText.Title">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/margin_12</item>
+        <item name="android:fontFamily">@string/roboto_medium</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/font_normal_14</item>
+    </style>
+
+    <style name="CardText.Description">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">@dimen/margin_little_8</item>
+        <item name="android:fontFamily">@string/roboto_medium</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">@dimen/font_normal_14</item>
+    </style>
+
+    <style name="AppButton" parent="Base.Widget.AppCompat.Button" />
+
+    <style name="AppButton.StartButton">
+        <item name="colorButtonNormal">@color/color_accent</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppButton.ShowButton">
+        <item name="colorButtonNormal">@android:color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="Delimiter">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">@color/grey_light</item>
+        <item name="android:layout_marginTop">@dimen/margin_small_16</item>
+        <item name="android:layout_marginBottom">@dimen/margin_little_8</item>
     </style>
 
 </resources>

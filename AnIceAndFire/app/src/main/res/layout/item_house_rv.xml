@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        style="@style/CustomCard.HouseCard"
+        app:contentPaddingBottom="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/house_title"
+                style="@style/CardText.Title"
+                tools:text="House_1" />
+
+            <TextView
+                android:id="@+id/house_additional"
+                style="@style/CardText.Description"
+                android:maxLines="2"
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce non elit vel eros semper tempor in nec nisl. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean at eros id purus fringilla fermentum sed quis tellus. Maecenas feugiat libero vel eros dapibus efficitur. Integer massa felis, blandit eget enim in, aliquet pretium leo." />
+
+            <!--
+            <xyz.rnovoselov.enterprise.aniceandfire.ui.views.AspectRatioImageView
+                android:id="@+id/house_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_normal_24"
+                android:scaleType="centerCrop"
+                app:aspect_ratio="1.78"
+                tools:src="@drawable/splash" />
+            -->
+
+            <View style="@style/Delimiter" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/house_show_more_btn"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/house_item_more_btn"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_accent_progress" />
+
+                <Button
+                    android:id="@+id/house_show_characters_btn"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/house_item_characters_btn"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_accent_progress" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -5,13 +5,11 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
-import java.util.List;
-
 /**
- * Created by roman on 26.04.17.
+ * Created by roman on 24.05.17.
  */
 
-public interface ISplashView extends MvpView {
+public interface IMainView extends MvpView {
 
     @StateStrategyType(SingleStateStrategy.class)
     void showProgress();
@@ -24,9 +22,4 @@ public interface ISplashView extends MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy.class)
     void showProgressMessage(String message);
-
-    void showDownloadHouseInfoDialog(final List<Integer> selected);
-
-    @StateStrategyType(SingleStateStrategy.class)
-    void openMainActivity();
 }

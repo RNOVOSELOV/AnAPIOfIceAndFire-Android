@@ -67,7 +67,7 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
 
     private void updateDownloadDefaultHouses() {
         getViewState().showProgress();
-        getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message));
+        getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.splash_houses_get_info_message));
         model.updateHouseDataInRealm()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(updateDataSubscriber);
@@ -75,7 +75,7 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
 
     public void startDownloadDefaultHouses() {
         getViewState().showProgress();
-        getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message));
+        getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.splash_houses_get_info_message));
         model.getHousesAndSaveToRealm(defaultHousesSelectedItems)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(updateDataSubscriber);
@@ -101,11 +101,11 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
             if (houseDataDto.getName().isEmpty()) {
                 String name = model.getHouseName(houseDataDto.getId());
                 if (!name.isEmpty()) {
-                    getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message)
+                    getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.splash_houses_get_info_message)
                             + "\n" + name);
                 }
             } else {
-                getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.houses_get_info_message)
+                getViewState().showProgressMessage(resourceProvider.getStringResource(R.string.splash_houses_get_info_message)
                         + "\n" + houseDataDto.getName());
             }
         }

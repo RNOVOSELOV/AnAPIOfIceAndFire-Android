@@ -1,7 +1,18 @@
 <resources>
-    <string name="app_name">AnIceAndFire</string>
+
+    <!-- FONTS -->
+    <string name="roboto_regular" translatable="false">sans-serif</string>
+    <string name="roboto_ligth" translatable="false">sans-serif-ligth</string>
+    <string name="roboto_condensed" translatable="false">sans-serif-condensed</string>
+    <string name="roboto_black" translatable="false">sans-serif-black</string>
+    <string name="roboto_thin" translatable="false">sans-serif-thin</string>
+    <string name="roboto_medium" translatable="false">sans-serif-medium</string>
+
+    <string name="app_name">An Ice and Fire</string>
     <string name="error_net_unavailable">Интернет недоступен. Попробуйте позже.</string>
     <string name="error_no_houses_downloaded">Нет загруженных домов.</string>
-    <string name="houses_get_info_message">Синхронизация данных …</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="splash_houses_get_info_message">Синхронизация данных …</string>
+    <string name="main_has_no_houses_for_view">Нет загруженных домов для отображения</string>
+    <string name="house_item_more_btn">Подробнее</string>
+    <string name="house_item_characters_btn">Персонажи</string>
 </resources>
