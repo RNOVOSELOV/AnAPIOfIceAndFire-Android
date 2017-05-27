@@ -8,7 +8,7 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Observable;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.HouseRealm;
-import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.errors.NoDownloadedDataErrors;
+import xyz.rnovoselov.enterprise.aniceandfire.data.errors.NoDownloadedDataErrors;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
 
 /**

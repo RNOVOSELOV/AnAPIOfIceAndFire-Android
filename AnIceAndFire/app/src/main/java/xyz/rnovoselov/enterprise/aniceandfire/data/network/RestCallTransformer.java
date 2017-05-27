@@ -2,7 +2,7 @@ package xyz.rnovoselov.enterprise.aniceandfire.data.network;
 
 import retrofit2.Response;
 import rx.Observable;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.error.ApiError;
+import xyz.rnovoselov.enterprise.aniceandfire.data.errors.ApiError;
 
 /**
  * Created by roman on 05.05.17.

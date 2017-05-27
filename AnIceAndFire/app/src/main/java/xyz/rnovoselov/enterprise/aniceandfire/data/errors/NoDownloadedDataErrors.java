@@ -1,4 +1,4 @@
-package xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.errors;
+package xyz.rnovoselov.enterprise.aniceandfire.data.errors;
 
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
 import xyz.rnovoselov.enterprise.aniceandfire.R;

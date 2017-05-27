@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import xyz.rnovoselov.enterprise.aniceandfire.BuildConfig;
 import xyz.rnovoselov.enterprise.aniceandfire.R;
+import xyz.rnovoselov.enterprise.aniceandfire.data.errors.AbstractApplicationError;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.IMainView;
 
 public class MainActivity extends BaseActivity implements IMainView {
@@ -67,7 +69,14 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Override
     public void showError(Throwable exception) {
-        showMessage(exception.getMessage());
+        if (BuildConfig.DEBUG) {
+            showMessage(exception.getMessage());
+            exception.printStackTrace();
+        } else if (exception instanceof AbstractApplicationError) {
+            showMessage(exception.getMessage());
+        } else {
+            // send report to crashlitics
+        }
     }
 
     @Override

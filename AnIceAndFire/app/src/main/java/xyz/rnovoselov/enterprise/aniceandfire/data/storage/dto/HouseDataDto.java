@@ -14,12 +14,14 @@ public class HouseDataDto implements Parcelable {
     private String lastModifiedDate;
     private String name;
     private String words;
+    private String coatOfArms;
 
     public HouseDataDto(int id, String lastModifiedDate) {
         this.id = id;
         this.lastModifiedDate = lastModifiedDate;
         this.name = "";
         this.words = "";
+        coatOfArms = "";
     }
 
     public HouseDataDto(int id, String lastModifiedDate, String name) {
@@ -27,6 +29,7 @@ public class HouseDataDto implements Parcelable {
         this.lastModifiedDate = lastModifiedDate;
         this.name = name;
         this.words = "";
+        coatOfArms = "";
     }
 
     public HouseDataDto(HouseRealm houseRealm) {
@@ -34,6 +37,8 @@ public class HouseDataDto implements Parcelable {
         this.lastModifiedDate = houseRealm.getLastModified();
         this.name = houseRealm.getName();
         this.words = houseRealm.getWords();
+        coatOfArms = houseRealm.getCoatOfArms();
+
     }
 
     //region ================= Getters ==================
@@ -54,6 +59,10 @@ public class HouseDataDto implements Parcelable {
         return words;
     }
 
+    public String getCoatOfArms() {
+        return coatOfArms;
+    }
+
     //endregion
 
     //region ================ Parcelable ================
@@ -63,6 +72,21 @@ public class HouseDataDto implements Parcelable {
         lastModifiedDate = in.readString();
         name = in.readString();
         words = in.readString();
+        coatOfArms = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(lastModifiedDate);
+        dest.writeString(name);
+        dest.writeString(words);
+        dest.writeString(coatOfArms);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<HouseDataDto> CREATOR = new Creator<HouseDataDto>() {
@@ -76,19 +100,6 @@ public class HouseDataDto implements Parcelable {
             return new HouseDataDto[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(lastModifiedDate);
-        dest.writeString(name);
-        dest.writeString(words);
-    }
 
     //endregion
 }
