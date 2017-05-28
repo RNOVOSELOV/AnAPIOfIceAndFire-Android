@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
@@ -23,7 +23,7 @@
             <TextView
                 android:id="@+id/house_additional"
                 style="@style/CardText.Description"
-                android:maxLines="2"
+                android:maxLines="4"
                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce non elit vel eros semper tempor in nec nisl. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean at eros id purus fringilla fermentum sed quis tellus. Maecenas feugiat libero vel eros dapibus efficitur. Integer massa felis, blandit eget enim in, aliquet pretium leo." />
 
             <!--

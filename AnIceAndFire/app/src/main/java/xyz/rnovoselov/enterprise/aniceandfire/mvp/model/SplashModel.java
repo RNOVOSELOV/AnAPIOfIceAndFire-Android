@@ -9,9 +9,9 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.storage.dto.HouseDataDto;
  * Created by roman on 01.05.17.
  */
 
-public class HouseModel extends AbstractModel {
+public class SplashModel extends AbstractModel {
 
-    public HouseModel() {
+    public SplashModel() {
     }
 
     public boolean isSomeHousesDownloaded() {

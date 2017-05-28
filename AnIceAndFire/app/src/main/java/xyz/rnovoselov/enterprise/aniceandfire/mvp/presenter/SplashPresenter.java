@@ -20,7 +20,7 @@ import xyz.rnovoselov.enterprise.aniceandfire.data.providers.ResourceProvider;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.dto.HouseDataDto;
 import xyz.rnovoselov.enterprise.aniceandfire.di.components.AppComponent;
 import xyz.rnovoselov.enterprise.aniceandfire.di.scopes.DaggerScope;
-import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.HouseModel;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.model.SplashModel;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
 
@@ -29,19 +29,19 @@ import xyz.rnovoselov.enterprise.aniceandfire.utils.Constants;
  */
 
 @InjectViewState
-public class HousePresenter extends MvpPresenter<ISplashView> {
+public class SplashPresenter extends MvpPresenter<ISplashView> {
 
-    private static final String TAG = Constants.TAG_PREFIX + HousePresenter.class.getSimpleName();
+    private static final String TAG = Constants.TAG_PREFIX + SplashPresenter.class.getSimpleName();
 
     @Inject
-    HouseModel model;
+    SplashModel model;
 
     @Inject
     ResourceProvider resourceProvider;
 
     private List<Integer> defaultHousesSelectedItems;
 
-    public HousePresenter() {
+    public SplashPresenter() {
         Component component = createDaggerComponent();
         component.inject(this);
     }
@@ -86,12 +86,13 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
         public void onCompleted() {
             getViewState().hideProgress();
             getViewState().openMainActivity();
+            detachView(getViewState());
         }
 
         @Override
         public void onError(Throwable t) {
-            getViewState().showError(t);
             getViewState().hideProgress();
+            getViewState().showError(t);
             getViewState().openMainActivity();
             Log.e(TAG, "ERROR: " + t.toString());
         }
@@ -114,7 +115,7 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
     //region ================ DI ================
 
     private Component createDaggerComponent() {
-        return DaggerHousePresenter_Component.builder()
+        return DaggerSplashPresenter_Component.builder()
                 .appComponent(IceAndFireApplication.getAppComponent())
                 .module(new Module())
                 .build();
@@ -123,22 +124,22 @@ public class HousePresenter extends MvpPresenter<ISplashView> {
     @dagger.Module
     class Module {
         @Provides
-        @DaggerScope(HousePresenter.class)
-        HouseModel provideHouseModel() {
-            return new HouseModel();
+        @DaggerScope(SplashPresenter.class)
+        SplashModel provideSplashModel() {
+            return new SplashModel();
         }
 
         @Provides
-        @DaggerScope(HousePresenter.class)
+        @DaggerScope(SplashPresenter.class)
         ResourceProvider provideResources(Context context) {
             return new ResourceProvider(context);
         }
     }
 
     @dagger.Component(dependencies = AppComponent.class, modules = Module.class)
-    @DaggerScope(HousePresenter.class)
+    @DaggerScope(SplashPresenter.class)
     interface Component {
-        void inject(HousePresenter presenter);
+        void inject(SplashPresenter presenter);
     }
 
     //endregion

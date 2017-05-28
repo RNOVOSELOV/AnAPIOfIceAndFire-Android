@@ -9,10 +9,10 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import xyz.rnovoselov.enterprise.aniceandfire.IceAndFireApplication;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
-import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
 import xyz.rnovoselov.enterprise.aniceandfire.data.errors.ApiError;
 import xyz.rnovoselov.enterprise.aniceandfire.data.errors.NetworkAvailableError;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestCallTransformer;
+import xyz.rnovoselov.enterprise.aniceandfire.data.network.RestService;
 import xyz.rnovoselov.enterprise.aniceandfire.data.network.responces.HouseResponse;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.dto.HouseDataDto;
 import xyz.rnovoselov.enterprise.aniceandfire.data.storage.realm.CharacterRealm;
@@ -109,8 +109,12 @@ public class DataProvider {
         return realmProvider.isSomeHousesDownloaded();
     }
 
-    public List<Integer> getListActiveHouses() {
-        return realmProvider.getAllHousesIdList();
+    public String getHouseLastModifiedDate(int houseId) {
+        HouseRealm house = realmProvider.getHouseById(houseId);
+        if (house == null) {
+            return AppConfig.DEFAULT_LAST_UPDATE_DATE;
+        }
+        return house.getLastModified();
     }
 
     public String getHouseNameFromRealm(int id) {
@@ -119,6 +123,11 @@ public class DataProvider {
             return "";
         }
         return house.getName();
+    }
+
+    public Observable<HouseDataDto> getHousesFromRealm() {
+        return realmProvider.getAllHousesObs()
+                .map(HouseDataDto::new);
     }
 
     //endregion
@@ -195,7 +204,7 @@ public class DataProvider {
         return NetworkStatusChecker.isInternetAvailable()
                 .flatMap(aBoolean -> aBoolean ? Observable.from(housesId) : Observable.error(new NetworkAvailableError()))
                 .flatMap(integer -> {
-                    HouseDataDto houseData = new HouseDataDto(integer, realmProvider.getHouseLastModifiedDate(integer));
+                    HouseDataDto houseData = new HouseDataDto(integer, getHouseLastModifiedDate(integer));
                     return Observable.just(houseData);
                 })
                 .flatMap(this::processApiHouseResponce);
@@ -207,7 +216,8 @@ public class DataProvider {
      * @return метод возвращает пустую последовательность, обновляя информацию о всех загруженных в Realm домах
      */
     public Observable<HouseDataDto> updateHousesInfo() {
-        return realmProvider.getAllHousesIdObs()
+        return realmProvider.getAllHousesObs()
+                .map(HouseRealm::getId)
                 .toList()
                 .flatMap(this::getHouseFromNetworkAndSaveToRealmObs);
     }

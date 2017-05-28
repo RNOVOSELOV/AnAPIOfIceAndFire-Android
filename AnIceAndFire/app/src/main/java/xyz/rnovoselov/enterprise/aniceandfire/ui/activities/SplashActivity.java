@@ -17,7 +17,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import xyz.rnovoselov.enterprise.aniceandfire.R;
-import xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter.HousePresenter;
+import xyz.rnovoselov.enterprise.aniceandfire.mvp.presenter.SplashPresenter;
 import xyz.rnovoselov.enterprise.aniceandfire.mvp.view.ISplashView;
 import xyz.rnovoselov.enterprise.aniceandfire.utils.AppConfig;
 
@@ -27,7 +27,7 @@ public class SplashActivity extends BaseActivity implements ISplashView {
     CoordinatorLayout coordinator;
 
     @InjectPresenter
-    HousePresenter housePresenter;
+    SplashPresenter splashPresenter;
 
     AlertDialog selectDefaultHousesDialog;
 
@@ -97,12 +97,12 @@ public class SplashActivity extends BaseActivity implements ISplashView {
                 .setMultiChoiceItems(housesArray, isCheckedFields, (DialogInterface dialog13, int which, boolean isChecked) -> {
                     Integer houseId = AppConfig.getDefaultHousesMap().get(housesArray[which]);
                     if (isChecked) {
-                        housePresenter.addHouseSelectedItem(houseId);
+                        splashPresenter.addHouseSelectedItem(houseId);
                     } else {
-                        housePresenter.removeHouseSelectedItem(houseId);
+                        splashPresenter.removeHouseSelectedItem(houseId);
                     }
                 })
-                .setPositiveButton("Загрузить", (dialog12, which) -> housePresenter.startDownloadDefaultHouses())
+                .setPositiveButton("Загрузить", (dialog12, which) -> splashPresenter.startDownloadDefaultHouses())
                 .setNegativeButton("Пропустить", (dialog1, which) -> openMainActivity());
 
         selectDefaultHousesDialog = dialogBuilder.create();
