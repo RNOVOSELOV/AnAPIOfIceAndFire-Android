@@ -61,7 +61,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
     public static class HouseListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.house_title)
-        protected TextView houseTitleTv;
+        TextView houseTitleTv;
         @BindView(R.id.house_additional)
         TextView houseAdditionalTv;
         @BindView(R.id.house_show_characters_btn)

@@ -19,6 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:elevation="5dp"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -31,9 +33,6 @@
 
     </FrameLayout>
 
-    <!--
-        <include layout="@layout/content_main" />
-    -->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -42,6 +41,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:backgroundTint="@color/color_primary"
         app:rippleColor="@color/color_accent_progress"
+        app:layout_behavior="xyz.rnovoselov.enterprise.aniceandfire.ui.behavior.FabBehavior"
         app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
