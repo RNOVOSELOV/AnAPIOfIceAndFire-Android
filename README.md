@@ -4,4 +4,4 @@
 
 ## О проекте
 
-"AnAPIOfIceAndFire" - Бесплатное приложение, реализующее открытое [API of Ice And Fire](https://anapioficeandfire.com/).
+This is the implementation of [API of Ice And Fire](https://anapioficeandfire.com/) in the Android application
